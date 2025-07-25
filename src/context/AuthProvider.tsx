@@ -93,8 +93,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateUserInStorage(updatedUser);
   };
 
+  const updateUser = (newDetails: Partial<User>) => {
+    if (!user) return;
+    const updatedUser = { ...user, ...newDetails };
+    updateUserInStorage(updatedUser);
+  };
+
+
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

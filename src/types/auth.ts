@@ -23,4 +23,5 @@ export interface AuthContextType {
   login: (credentials: LoginCredentials) => boolean;
   logout: () => void;
   addXP: (amount: number) => void;
+  updateUser?: (newDetails: Partial<User>) => void;
 }

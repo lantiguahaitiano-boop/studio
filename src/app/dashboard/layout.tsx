@@ -33,6 +33,7 @@ import {
   Calculator,
   Newspaper,
   MessageCircleQuestion,
+  Settings,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
@@ -129,6 +130,18 @@ export default function DashboardLayout({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
+            <SidebarMenuItem>
+                <SidebarMenuButton
+                    as={Link}
+                    href="/dashboard/settings"
+                    onClick={() => handleNavigation('/dashboard/settings')}
+                    isActive={pathname === '/dashboard/settings'}
+                    tooltip={{children: "Configuración"}}
+                >
+                    <Settings />
+                    <span>Configuración</span>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton onClick={logout} tooltip={{children: "Cerrar Sesión"}}>
                 <LogOut />
