@@ -47,8 +47,10 @@ export function LoginForm() {
         title: "Error de inicio de sesión",
         description: "El correo o la contraseña son incorrectos.",
       });
-      setIsLoading(false);
     }
+    // Always set loading to false after attempting,
+    // as navigation will handle the success case.
+    setIsLoading(false);
   }
 
   return (

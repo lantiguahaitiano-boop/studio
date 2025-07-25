@@ -59,8 +59,8 @@ export function RegisterForm() {
         title: "Error de registro",
         description: "Un usuario con este correo ya existe.",
       });
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   return (
