@@ -98,8 +98,8 @@ export default function LandingPage() {
                 </p>
            </div>
            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <Link href="#" className="hover:text-primary">Términos de Servicio</Link>
-                <Link href="#" className="hover:text-primary">Política de Privacidad</Link>
+                <Link href="/terms" className="hover:text-primary">Términos de Servicio</Link>
+                <Link href="/privacy" className="hover:text-primary">Política de Privacidad</Link>
            </div>
         </div>
       </footer>
