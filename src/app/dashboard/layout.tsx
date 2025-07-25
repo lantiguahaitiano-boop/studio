@@ -145,6 +145,7 @@ export default function DashboardLayout({
                   onClick={() => handleNavigation('/dashboard/admin')}
                   isActive={pathname === '/dashboard/admin'}
                   tooltip={{children: "Panel de Admin"}}
+                  className="text-green-500 hover:bg-green-500/10 hover:text-green-500 data-[active=true]:bg-green-500/10 data-[active=true]:text-green-500"
                 >
                   <Shield />
                   <span>Panel de Admin</span>
@@ -158,13 +159,18 @@ export default function DashboardLayout({
                     onClick={() => handleNavigation('/dashboard/settings')}
                     isActive={pathname === '/dashboard/settings'}
                     tooltip={{children: "Configuración"}}
+                    className="text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500"
                 >
                     <Settings />
                     <span>Configuración</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={logout} tooltip={{children: "Cerrar Sesión"}}>
+              <SidebarMenuButton
+                onClick={logout}
+                tooltip={{ children: 'Cerrar Sesión' }}
+                className="text-red-500 hover:bg-red-500/10 hover:text-red-500 data-[active=true]:bg-red-500/10 data-[active=true]:text-red-500"
+              >
                 <LogOut />
                 <span>Cerrar Sesión</span>
               </SidebarMenuButton>
