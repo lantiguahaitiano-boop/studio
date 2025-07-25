@@ -1,80 +1,43 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { askQuestion } from '@/ai/flows/ai-chatbot';
+import { explainConcept } from '@/ai/flows/concept-explainer';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Send, User, Bot, Loader2, MessageCircleQuestion } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Loader2, Lightbulb } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  question: z.string().min(1),
+  concept: z.string().min(5, {
+    message: 'El concepto debe tener al menos 5 caracteres.',
+  }),
 });
 
-type Message = {
-  text: string;
-  sender: 'user' | 'ai';
-  isLoading?: boolean;
-};
-
-const LOCAL_STORAGE_KEY = 'lumenai_interactive_assistant_history';
-
 export default function InteractiveAssistantPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [explanation, setExplanation] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { addXP } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      question: '',
+      concept: '',
     },
   });
 
-  useEffect(() => {
-    try {
-      const storedHistory = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (storedHistory) {
-        setMessages(JSON.parse(storedHistory));
-      }
-    } catch (error) {
-      console.error('Failed to load chat history from localStorage', error);
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(messages));
-    }
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, [messages]);
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const userMessage: Message = { text: values.question, sender: 'user' };
-    const loadingMessage: Message = { text: '', sender: 'ai', isLoading: true };
-
-    setMessages((prev) => [...prev, userMessage, loadingMessage]);
-    form.reset();
-
+    setIsLoading(true);
+    setExplanation(null);
     try {
-      const result = await askQuestion({ question: values.question });
-      const aiMessage: Message = { text: result.answer, sender: 'ai' };
-      setMessages((prev) => [...prev.slice(0, -1), aiMessage]);
+      const result = await explainConcept(values);
+      setExplanation(result.explanation);
       addXP(10);
       toast({
         title: "✨ +10 XP",
@@ -82,100 +45,92 @@ export default function InteractiveAssistantPage() {
       });
     } catch (error) {
       console.error(error);
-      const errorMessage: Message = {
-        text: 'Lo siento, no pude procesar tu pregunta. Inténtalo de nuevo.',
-        sender: 'ai',
-      };
-      setMessages((prev) => [...prev.slice(0, -1), errorMessage]);
+      setExplanation('Se produjo un error al generar la explicación. Por favor, inténtalo de nuevo.');
+    } finally {
+      setIsLoading(false);
     }
   }
-  
+
   return (
-    <div className="flex h-[calc(100vh-theme(spacing.24))] flex-col">
-      <div className="mb-4">
-        <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Asistente Interactivo de Preguntas</h1>
-        <p className="text-muted-foreground">Chatea en tiempo real para obtener respuestas a tus dudas académicas.</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Explicador Interactivo</h1>
+        <p className="text-muted-foreground">¿Qué te gustaría entender? La IA te lo explica en detalle.</p>
       </div>
 
-      <div className="flex flex-1 flex-col overflow-hidden rounded-lg border">
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-          <div className="space-y-6">
-            {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                    <MessageCircleQuestion className="w-16 h-16 mb-4" />
-                    <h2 className="text-xl font-semibold">¿Cómo puedo ayudarte?</h2>
-                    <p>Escribe tu pregunta académica abajo para comenzar.</p>
-                </div>
-            )}
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  'flex items-start gap-3',
-                  message.sender === 'user' ? 'justify-end' : 'justify-start'
-                )}
-              >
-                {message.sender === 'ai' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                        <Bot className="h-5 w-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-                <div
-                  className={cn(
-                    'max-w-md rounded-lg p-3 text-sm md:max-w-xl lg:max-w-2xl',
-                    message.sender === 'user'
-                      ? 'rounded-br-none bg-accent text-accent-foreground'
-                      : 'rounded-bl-none bg-muted'
-                  )}
-                >
-                  {message.isLoading ? (
-                    <div className="flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Pensando...</span>
-                    </div>
-                  ) : (
-                    <p className="whitespace-pre-wrap">{message.text}</p>
-                  )}
-                </div>
-                {message.sender === 'user' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback><User className="h-5 w-5" /></AvatarFallback>
-                  </Avatar>
-                )}
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-        <div className="border-t p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Concepto a Explicar</CardTitle>
+        </CardHeader>
+        <CardContent>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex items-center gap-2"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="question"
+                name="concept"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem>
+                    <FormLabel>Escribe una palabra, frase o pregunta</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Escribe tu pregunta aquí..."
-                        autoComplete="off"
+                        placeholder="Ej: ¿Por qué el cielo es azul?"
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" size="icon" disabled={form.formState.isSubmitting}>
-                <Send className="h-4 w-4" />
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Explicando...
+                  </>
+                ) : (
+                  <>
+                    <Lightbulb className="mr-2 h-4 w-4" />
+                    Explicar
+                  </>
+                )}
               </Button>
             </form>
           </Form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
+
+      {isLoading && (
+        <Card>
+            <CardHeader>
+                <CardTitle>Generando Explicación</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                    <p>La IA está preparando una explicación detallada...</p>
+                </div>
+                <div className="space-y-2 pt-4">
+                    <div className="h-4 w-full animate-pulse rounded-md bg-muted"></div>
+                    <div className="h-4 w-5/6 animate-pulse rounded-md bg-muted"></div>
+                    <div className="h-4 w-full animate-pulse rounded-md bg-muted"></div>
+                     <div className="h-4 w-3/4 animate-pulse rounded-md bg-muted"></div>
+                </div>
+            </CardContent>
+        </Card>
+      )}
+
+      {explanation && !isLoading && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Explicación Detallada</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
+                {explanation}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
