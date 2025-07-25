@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { User } from '@/types/auth';
-import { Users, Award, Trophy, Star, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Users, Award, Trophy, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from 'recharts';
 
-const ADMIN_SECURITY_KEY = process.env.NEXT_PUBLIC_ADMIN_SECURITY_KEY;
+const ADMIN_SECURITY_KEY = process.env.NEXT_PUBLIC_ADMIN_SECURITY_KEY || 'lumenadmin_supersecret_key_123!';
 
 export default function AdminPage() {
   const { user, loading, getAllUsers } = useAuth();
@@ -33,22 +34,49 @@ export default function AdminPage() {
     }
   }, [user, loading, router, getAllUsers]);
 
-  const stats = useMemo(() => {
+  const { stats, toolUsageData, educationLevelData } = useMemo(() => {
     if (allUsers.length === 0) {
-      return { totalUsers: 0, averageLevel: 0, totalAchievements: 0 };
+      return { stats: { totalUsers: 0, averageLevel: 0, totalAchievements: 0 }, toolUsageData: [], educationLevelData: [] };
     }
+
     const totalUsers = allUsers.length;
     const totalLevel = allUsers.reduce((acc, u) => acc + (u.level || 1), 0);
     const averageLevel = totalLevel / totalUsers;
     const totalAchievements = allUsers.reduce((acc, u) => acc + (u.achievements?.length || 0), 0);
-    
+
+    const toolUsageCounter: { [key: string]: number } = {};
+    allUsers.forEach(u => {
+        if (u.toolUsage) {
+            Object.entries(u.toolUsage).forEach(([tool, count]) => {
+                toolUsageCounter[tool] = (toolUsageCounter[tool] || 0) + count;
+            });
+        }
+    });
+
+    const toolUsageData = Object.entries(toolUsageCounter)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value);
+
+    const educationLevelCounter: { [key: string]: number } = {};
+    allUsers.forEach(u => {
+        const level = u.educationLevel || 'No especificado';
+        educationLevelCounter[level] = (educationLevelCounter[level] || 0) + 1;
+    });
+
+    const educationLevelData = Object.entries(educationLevelCounter)
+        .map(([name, value]) => ({ name, value }));
+
     return {
-      totalUsers,
-      averageLevel: parseFloat(averageLevel.toFixed(1)),
-      totalAchievements,
+      stats: {
+        totalUsers,
+        averageLevel: parseFloat(averageLevel.toFixed(1)),
+        totalAchievements,
+      },
+      toolUsageData,
+      educationLevelData
     };
   }, [allUsers]);
-  
+
   const handleVerification = () => {
     if (securityKey === ADMIN_SECURITY_KEY) {
       setIsVerified(true);
@@ -98,6 +126,8 @@ export default function AdminPage() {
         </Dialog>
     )
   }
+  
+  const COLORS = ['#673AB7', '#2196F3', '#4CAF50', '#FFC107', '#FF5722', '#795548'];
 
   return (
     <div className="space-y-6">
@@ -135,6 +165,47 @@ export default function AdminPage() {
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalAchievements}</div>
             <p className="text-xs text-muted-foreground">Insignias desbloqueadas por los usuarios.</p>
+          </CardContent>
+        </Card>
+      </div>
+
+       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="lg:col-span-4">
+          <CardHeader>
+            <CardTitle>Popularidad de Herramientas</CardTitle>
+            <CardDescription>Uso total de cada herramienta en la plataforma.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={toolUsageData} layout="vertical" margin={{ right: 20, left: 40 }}>
+                <XAxis type="number" hide />
+                <YAxis dataKey="name" type="category" width={80} tickLine={false} axisLine={false} />
+                <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{backgroundColor: 'hsl(var(--background))'}} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                    {toolUsageData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Distribución de Usuarios</CardTitle>
+            <CardDescription>Por nivel educativo.</CardDescription>
+          </CardHeader>
+          <CardContent>
+             <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                    <Pie data={educationLevelData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
+                         {educationLevelData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                    <Tooltip contentStyle={{backgroundColor: 'hsl(var(--background))'}}/>
+                </PieChart>
+             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
