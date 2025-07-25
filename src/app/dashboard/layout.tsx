@@ -23,15 +23,19 @@ import {
   BotMessageSquare,
   Languages,
   LogOut,
+  FileText,
+  HelpCircle,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
 
 const menuItems = [
-    { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck, implemented: true },
-    { href: '/dashboard/presentation-creator', label: 'Creador de Exposiciones', icon: Presentation, implemented: true },
-    { href: '/dashboard/chatbot', label: 'Chat Privado con IA', icon: BotMessageSquare, implemented: true },
-    { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages, implemented: true },
+    { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck },
+    { href: '/dashboard/presentation-creator', label: 'Creador de Exposiciones', icon: Presentation },
+    { href: '/dashboard/chatbot', label: 'Chat Privado con IA', icon: BotMessageSquare },
+    { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages },
+    { href: '/dashboard/text-summarizer', label: 'Resumen de Texto', icon: FileText },
+    { href: '/dashboard/quiz-generator', label: 'Generador de Cuestionarios', icon: HelpCircle },
 ];
 
 export default function DashboardLayout({
@@ -90,7 +94,6 @@ export default function DashboardLayout({
                             <SidebarMenuButton
                                 asChild
                                 isActive={pathname === item.href}
-                                disabled={!item.implemented}
                                 tooltip={{children: item.label}}
                             >
                                 <a>
