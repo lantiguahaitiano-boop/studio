@@ -7,13 +7,21 @@ import { useEffect, useState, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { User } from '@/types/auth';
-import { Users, Award, Trophy, Star } from 'lucide-react';
+import { Users, Award, Trophy, Star, ShieldCheck, AlertTriangle } from 'lucide-react';
+
+const ADMIN_SECURITY_KEY = 'lumenadmin';
 
 export default function AdminPage() {
   const { user, loading, getAllUsers } = useAuth();
   const router = useRouter();
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [isVerified, setIsVerified] = useState(false);
+  const [securityKey, setSecurityKey] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) {
@@ -40,6 +48,15 @@ export default function AdminPage() {
       totalAchievements,
     };
   }, [allUsers]);
+  
+  const handleVerification = () => {
+    if (securityKey === ADMIN_SECURITY_KEY) {
+      setIsVerified(true);
+      setError('');
+    } else {
+      setError('Clave de seguridad incorrecta.');
+    }
+  };
 
   if (loading || !user || user.role !== 'admin') {
     return (
@@ -47,6 +64,39 @@ export default function AdminPage() {
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
       </div>
     );
+  }
+  
+  if (!isVerified) {
+    return (
+        <Dialog open={!isVerified} onOpenChange={() => {}}>
+            <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+                <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2"><ShieldCheck/> Acceso Restringido</DialogTitle>
+                    <DialogDescription>
+                        Para acceder al panel de administración, por favor, introduce la clave de seguridad.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                    <Input 
+                        type="password"
+                        placeholder="Clave de seguridad"
+                        value={securityKey}
+                        onChange={(e) => setSecurityKey(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleVerification()}
+                    />
+                    {error && (
+                        <p className="text-sm text-destructive flex items-center gap-2">
+                            <AlertTriangle className="h-4 w-4"/> {error}
+                        </p>
+                    )}
+                </div>
+                <DialogFooter>
+                    <Button onClick={() => router.push('/dashboard')} variant="outline">Cancelar</Button>
+                    <Button onClick={handleVerification}>Verificar</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    )
   }
 
   return (
