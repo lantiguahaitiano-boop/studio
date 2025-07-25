@@ -2,9 +2,9 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion, Settings, Library, BrainCircuit, FlaskConical } from "lucide-react";
+import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion, Settings, Library, BrainCircuit, FlaskConical, Shield } from "lucide-react";
 
-const tools = [
+const commonTools = [
     { href: '/dashboard/task-assistant', title: 'Asistente de Tareas IA', description: 'Ayuda paso a paso con problemas.', icon: BookOpenCheck },
     { href: '/dashboard/text-summarizer', title: 'Resumen de Texto', description: 'Genera resúmenes concisos.', icon: Newspaper },
     { href: '/dashboard/study-organizer', title: 'Organizador de Estudio', description: 'Crea y gestiona tus horarios.', icon: CalendarDays },
@@ -23,11 +23,18 @@ const tools = [
     { href: '/dashboard/virtual-lab', title: 'Laboratorio Virtual', description: 'Experimenta con simulaciones.', icon: FlaskConical },
     { href: '/dashboard/progress-achievements', title: 'Progreso y Logros', description: 'Muestra tu avance y logros.', icon: TrendingUp },
     { href: '/dashboard/settings', title: 'Configuración', description: 'Personaliza tu experiencia.', icon: Settings },
-]
+];
+
+const adminTools = [
+    { href: '/dashboard/admin', title: 'Panel de Admin', description: 'Gestiona la aplicación y usuarios.', icon: Shield },
+];
+
 
 export default function DashboardPage() {
     const { user } = useAuth();
     
+    const tools = user?.role === 'admin' ? [...commonTools, ...adminTools] : commonTools;
+
     return (
         <div className="flex flex-col gap-6">
             <div>

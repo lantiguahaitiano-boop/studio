@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const ADMIN_EMAIL = 'lantiguayordaly76@gmail.com';
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       toolUsage: {},
       achievements: [],
       favoriteResources: [],
+      role: email === ADMIN_EMAIL ? 'admin' : 'user',
     };
     users.push(newUser);
     localStorage.setItem('lumenai_users', JSON.stringify(users));
@@ -84,6 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         toolUsage: foundUser.toolUsage || {},
         achievements: foundUser.achievements || [],
         favoriteResources: foundUser.favoriteResources || [],
+        role: foundUser.role || 'user',
       };
       updateUserInStorage(userData);
       router.push('/dashboard');

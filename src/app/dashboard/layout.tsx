@@ -37,6 +37,7 @@ import {
   Library,
   BrainCircuit,
   FlaskConical,
+  Shield,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
@@ -136,6 +137,20 @@ export default function DashboardLayout({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
+            {user.role === 'admin' && (
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  as={Link}
+                  href="/dashboard/admin"
+                  onClick={() => handleNavigation('/dashboard/admin')}
+                  isActive={pathname === '/dashboard/admin'}
+                  tooltip={{children: "Panel de Admin"}}
+                >
+                  <Shield />
+                  <span>Panel de Admin</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
                 <SidebarMenuButton
                     as={Link}

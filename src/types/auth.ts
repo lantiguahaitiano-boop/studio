@@ -12,6 +12,7 @@ export interface User {
   toolUsage?: ToolUsage;
   achievements?: string[];
   favoriteResources?: string[];
+  role?: 'admin' | 'user';
 }
 
 export interface RegisterCredentials extends Omit<User, 'password'> {
