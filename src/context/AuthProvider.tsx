@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import type { User, AuthContextType, RegisterCredentials, LoginCredentials } from '@/types/auth';
+import type { User, AuthContextType, RegisterCredentials, LoginCredentials, Suggestion } from '@/types/auth';
 import { achievementsList, checkAchievements } from '@/lib/achievements';
 import { useToast } from '@/hooks/use-toast';
 
@@ -192,10 +192,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const storedUsers = localStorage.getItem('lumenai_users');
     return storedUsers ? JSON.parse(storedUsers) : [];
   };
+  
+  const submitSuggestion = (text: string) => {
+    if (!user) return;
+    const storedSuggestions = localStorage.getItem('lumenai_suggestions');
+    const suggestions = storedSuggestions ? JSON.parse(storedSuggestions) : [];
+    
+    const newSuggestion: Suggestion = {
+        text,
+        userEmail: user.email,
+        userName: user.name,
+        timestamp: new Date().toISOString(),
+    };
+    
+    suggestions.push(newSuggestion);
+    localStorage.setItem('lumenai_suggestions', JSON.stringify(suggestions));
+  };
+  
+  const getAllSuggestions = (): Suggestion[] => {
+     if (user?.role !== 'admin') {
+      return [];
+    }
+    const storedSuggestions = localStorage.getItem('lumenai_suggestions');
+    const suggestions: Suggestion[] = storedSuggestions ? JSON.parse(storedSuggestions) : [];
+    // Return newest suggestions first
+    return suggestions.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  };
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers, submitSuggestion, getAllSuggestions }}>
       {children}
     </AuthContext.Provider>
   );

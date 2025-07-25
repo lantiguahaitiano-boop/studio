@@ -24,6 +24,13 @@ export interface LoginCredentials {
   password?: string;
 }
 
+export type Suggestion = {
+  text: string;
+  userEmail: string;
+  userName: string;
+  timestamp: string;
+};
+
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -35,4 +42,6 @@ export interface AuthContextType {
   toggleFavoriteResource?: (resourceId: string) => void;
   forceRoleSync?: () => void;
   getAllUsers?: () => User[];
+  submitSuggestion?: (text: string) => void;
+  getAllSuggestions?: () => Suggestion[];
 }

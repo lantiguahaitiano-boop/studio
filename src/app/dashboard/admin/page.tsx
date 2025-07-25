@@ -10,16 +10,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { User } from '@/types/auth';
-import { Users, Award, Trophy, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { User, Suggestion } from '@/types/auth';
+import { Users, Award, Trophy, ShieldCheck, AlertTriangle, MessageSquareQuote } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from 'recharts';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const ADMIN_SECURITY_KEY = process.env.NEXT_PUBLIC_ADMIN_SECURITY_KEY || 'lumenadmin_supersecret_key_123!';
 
 export default function AdminPage() {
-  const { user, loading, getAllUsers } = useAuth();
+  const { user, loading, getAllUsers, getAllSuggestions } = useAuth();
   const router = useRouter();
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isVerified, setIsVerified] = useState(false);
   const [securityKey, setSecurityKey] = useState('');
   const [error, setError] = useState('');
@@ -29,10 +32,11 @@ export default function AdminPage() {
       router.replace('/dashboard');
       return;
     }
-    if (user?.role === 'admin' && getAllUsers) {
+    if (user?.role === 'admin' && getAllUsers && getAllSuggestions) {
       setAllUsers(getAllUsers());
+      setSuggestions(getAllSuggestions());
     }
-  }, [user, loading, router, getAllUsers]);
+  }, [user, loading, router, getAllUsers, getAllSuggestions]);
 
   const { stats, toolUsageData, educationLevelData } = useMemo(() => {
     if (allUsers.length === 0) {
@@ -209,6 +213,33 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><MessageSquareQuote /> Buzón de Sugerencias</CardTitle>
+          <CardDescription>Feedback enviado por los usuarios para mejorar la plataforma.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {suggestions.length > 0 ? (
+                suggestions.map((suggestion, index) => (
+                    <div key={index} className="rounded-lg border bg-card p-4">
+                        <p className="text-card-foreground">{suggestion.text}</p>
+                        <div className="mt-2 flex items-center justify-between">
+                            <p className="text-xs text-muted-foreground font-medium">{suggestion.userName} ({suggestion.userEmail})</p>
+                            <p className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(new Date(suggestion.timestamp), { addSuffix: true, locale: es })}
+                            </p>
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <p className="text-muted-foreground text-center py-4">No hay sugerencias por el momento.</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
 
       <Card>
         <CardHeader>

@@ -18,23 +18,30 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Sun, ShieldCheck } from "lucide-react";
+import { Moon, Sun, ShieldCheck, Send, Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 const profileFormSchema = z.object({
   name: z.string().min(1, { message: "El nombre no puede estar vacío." }),
   educationLevel: z.string({ required_error: "Por favor, selecciona tu nivel educativo." }),
 });
 
+const suggestionFormSchema = z.object({
+  suggestion: z.string().min(10, { message: "La sugerencia debe tener al menos 10 caracteres."}),
+});
+
 const ADMIN_EMAIL = 'lantiguayordaly76@gmail.com';
 
 export default function SettingsPage() {
-  const { user, updateUser, forceRoleSync } = useAuth();
+  const { user, updateUser, forceRoleSync, submitSuggestion } = useAuth();
   const { setTheme } = useTheme();
   const { toast } = useToast();
+  const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
 
-  const form = useForm<z.infer<typeof profileFormSchema>>({
+  const profileForm = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
       name: user?.name || "",
@@ -42,13 +49,41 @@ export default function SettingsPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof profileFormSchema>) {
+  const suggestionForm = useForm<z.infer<typeof suggestionFormSchema>>({
+    resolver: zodResolver(suggestionFormSchema),
+    defaultValues: {
+      suggestion: "",
+    },
+  });
+
+  function onProfileSubmit(values: z.infer<typeof profileFormSchema>) {
     if (updateUser) {
       updateUser(values);
       toast({
         title: "Perfil Actualizado",
         description: "Tus datos han sido guardados correctamente.",
       });
+    }
+  }
+  
+  async function onSuggestionSubmit(values: z.infer<typeof suggestionFormSchema>) {
+    if (!submitSuggestion) return;
+    setIsSubmittingSuggestion(true);
+    try {
+        submitSuggestion(values.suggestion);
+        toast({
+            title: "Sugerencia Enviada",
+            description: "¡Gracias por tu feedback! Lo revisaremos pronto.",
+        });
+        suggestionForm.reset();
+    } catch (error) {
+         toast({
+            variant: "destructive",
+            title: "Error al enviar",
+            description: "No se pudo enviar tu sugerencia. Inténtalo de nuevo.",
+        });
+    } finally {
+        setIsSubmittingSuggestion(false);
     }
   }
 
@@ -69,17 +104,17 @@ export default function SettingsPage() {
         <p className="text-muted-foreground">Gestiona tu perfil y las preferencias de la aplicación.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Perfil de Usuario</CardTitle>
             <CardDescription>Actualiza tu información personal.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <Form {...profileForm}>
+              <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -90,7 +125,7 @@ export default function SettingsPage() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={profileForm.control}
                   name="educationLevel"
                   render={({ field }) => (
                     <FormItem>
@@ -150,7 +185,7 @@ export default function SettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Opciones de Administrador</CardTitle>
-                  <CardDescription>Herramientas especiales para la gestión de la cuenta.</CardDescription>
+                  <CardDescription>Herramientas especiales para la gestión.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Button onClick={handleRoleSync} variant="outline">
@@ -162,6 +197,43 @@ export default function SettingsPage() {
             )}
         </div>
       </div>
+      
+      <Card>
+        <CardHeader>
+            <CardTitle>Buzón de Sugerencias</CardTitle>
+            <CardDescription>¿Tienes una idea para mejorar LumenAI? ¡Nos encantaría escucharla!</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Form {...suggestionForm}>
+                <form onSubmit={suggestionForm.handleSubmit(onSuggestionSubmit)} className="space-y-4">
+                    <FormField
+                      control={suggestionForm.control}
+                      name="suggestion"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tu sugerencia</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                                placeholder="Describe tu idea, una nueva función o cualquier mejora que se te ocurra..."
+                                className="min-h-[100px]"
+                                {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" disabled={isSubmittingSuggestion}>
+                        {isSubmittingSuggestion ? (
+                            <> <Loader2 className="mr-2 h-4 w-4 animate-spin"/> Enviando... </>
+                        ) : (
+                            <> <Send className="mr-2 h-4 w-4"/> Enviar Sugerencia </>
+                        )}
+                    </Button>
+                </form>
+            </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
