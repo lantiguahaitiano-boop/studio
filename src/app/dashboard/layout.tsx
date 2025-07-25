@@ -35,6 +35,7 @@ import {
   MessageCircleQuestion,
   Settings,
   Library,
+  BrainCircuit,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
@@ -54,6 +55,7 @@ const menuItems = [
     { href: '/dashboard/project-planner', label: 'Planificador de Proyectos', icon: ListTodo },
     { href: '/dashboard/library', label: 'Biblioteca de Recursos', icon: Library },
     { href: '/dashboard/scientific-calculator', label: 'Calculadora Científica Explicada', icon: Calculator },
+    { href: '/dashboard/mind-map-tool', label: 'Herramienta de Mapas Mentales', icon: BrainCircuit },
     { href: '/dashboard/progress-achievements', label: 'Progreso y Logros', icon: TrendingUp },
 ];
 
