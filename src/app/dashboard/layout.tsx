@@ -31,7 +31,8 @@ import {
   ListTodo,
   TrendingUp,
   Calculator,
-  Newspaper
+  Newspaper,
+  MessageCircleQuestion,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
@@ -44,6 +45,7 @@ const menuItems = [
     { href: '/dashboard/essay-corrector', label: 'Corrector de Ensayos', icon: PenSquare },
     { href: '/dashboard/presentation-creator', label: 'Creador de Exposiciones', icon: Presentation },
     { href: '/dashboard/chatbot', label: 'Chat Privado con IA', icon: BotMessageSquare },
+    { href: '/dashboard/interactive-assistant', label: 'Asistente Interactivo de Preguntas', icon: MessageCircleQuestion },
     { href: '/dashboard/exam-creator', label: 'Creador de Exámenes', icon: HelpCircle },
     { href: '/dashboard/quiz-generator', label: 'Generador de Cuestionarios', icon: HelpCircle },
     { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages },

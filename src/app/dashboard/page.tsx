@@ -2,7 +2,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays } from "lucide-react";
+import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion } from "lucide-react";
 
 const tools = [
     { href: '/dashboard/task-assistant', title: 'Asistente de Tareas IA', description: 'Ayuda paso a paso con problemas.', icon: BookOpenCheck },
@@ -12,6 +12,7 @@ const tools = [
     { href: '/dashboard/essay-corrector', title: 'Corrector de Ensayos', description: 'Revisa gramática y estilo.', icon: PenSquare },
     { href: '/dashboard/presentation-creator', title: 'Creador de Exposiciones', description: 'Genera contenido para diapositivas.', icon: Presentation },
     { href: '/dashboard/chatbot', title: 'Chat Privado con IA', description: 'Responde preguntas académicas.', icon: BotMessageSquare },
+    { href: '/dashboard/interactive-assistant', title: 'Asistente Interactivo', description: 'Chatea para obtener respuestas.', icon: MessageCircleQuestion },
     { href: '/dashboard/exam-creator', title: 'Creador de Exámenes', description: 'Crea exámenes personalizados.', icon: HelpCircle },
     { href: '/dashboard/quiz-generator', title: 'Generador de Cuestionarios', description: 'Crea preguntas desde un texto.', icon: HelpCircle },
     { href: '/dashboard/translator', title: 'Traductor Educativo', description: 'Traduce textos con contexto.', icon: Languages },
