@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         toolUsage: foundUser.toolUsage || {},
         achievements: foundUser.achievements || [],
         favoriteResources: foundUser.favoriteResources || [],
-        role: foundUser.role || 'user',
+        role: email === ADMIN_EMAIL ? 'admin' : (foundUser.role || 'user'),
       };
       updateUserInStorage(userData);
       router.push('/dashboard');
