@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
@@ -42,12 +42,17 @@ export default function DashboardLayout({
   const { user, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       router.replace('/login');
     }
   }, [user, loading, router]);
+  
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname]);
 
   if (loading || !user) {
     return (
@@ -60,6 +65,12 @@ export default function DashboardLayout({
     );
   }
   
+  const handleNavigation = (href: string) => {
+    if (pathname !== href) {
+        setIsNavigating(true);
+    }
+  };
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -75,7 +86,7 @@ export default function DashboardLayout({
             <SidebarMenu>
                 {menuItems.map((item) => 
                     <SidebarMenuItem key={item.href}>
-                        <Link href={item.href} legacyBehavior passHref>
+                        <Link href={item.href} legacyBehavior passHref onClick={() => handleNavigation(item.href)}>
                             <SidebarMenuButton
                                 asChild
                                 isActive={pathname === item.href}
@@ -108,7 +119,15 @@ export default function DashboardLayout({
             <SidebarTrigger className="sm:hidden" />
             <UserNav />
         </header>
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <main className="relative flex-1 overflow-auto p-4 md:p-6">
+            {isNavigating && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+                    <p className="text-muted-foreground">Cargando herramienta...</p>
+                </div>
+              </div>
+            )}
             {children}
         </main>
       </SidebarInset>
