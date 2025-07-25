@@ -2,17 +2,22 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle } from "lucide-react";
+import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays } from "lucide-react";
 
 const tools = [
     { href: '/dashboard/task-assistant', title: 'Asistente de Tareas IA', description: 'Ayuda paso a paso con problemas.', icon: BookOpenCheck },
-    { href: '/dashboard/presentation-creator', title: 'Creador de Exposiciones', description: 'Genera contenido para diapositivas.', icon: Presentation },
-    { href: '/dashboard/chatbot', title: 'Chat Privado con IA', description: 'Responde preguntas académicas.', icon: BotMessageSquare },
-    { href: '/dashboard/translator', title: 'Traductor Educativo', description: 'Traduce textos con contexto.', icon: Languages },
     { href: '/dashboard/text-summarizer', title: 'Resumen de Texto', description: 'Genera resúmenes concisos.', icon: Newspaper },
-    { href: '/dashboard/quiz-generator', title: 'Generador de Cuestionarios', description: 'Crea preguntas desde un texto.', icon: HelpCircle },
+    { href: '/dashboard/study-organizer', title: 'Organizador de Estudio', description: 'Crea y gestiona tus horarios.', icon: CalendarDays },
     { href: '/dashboard/concept-explainer', title: 'Explicador de Conceptos', description: 'Simplifica temas complejos.', icon: Lightbulb },
     { href: '/dashboard/essay-corrector', title: 'Corrector de Ensayos', description: 'Revisa gramática y estilo.', icon: PenSquare },
+    { href: '/dashboard/presentation-creator', title: 'Creador de Exposiciones', description: 'Genera contenido para diapositivas.', icon: Presentation },
+    { href: '/dashboard/chatbot', title: 'Chat Privado con IA', description: 'Responde preguntas académicas.', icon: BotMessageSquare },
+    { href: '/dashboard/exam-creator', title: 'Creador de Exámenes', description: 'Crea exámenes personalizados.', icon: HelpCircle },
+    { href: '/dashboard/quiz-generator', title: 'Generador de Cuestionarios', description: 'Crea preguntas desde un texto.', icon: HelpCircle },
+    { href: '/dashboard/translator', title: 'Traductor Educativo', description: 'Traduce textos con contexto.', icon: Languages },
+    { href: '/dashboard/project-planner', title: 'Planificador de Proyectos', description: 'Estructura trabajos de investigación.', icon: ListTodo },
+    { href: '/dashboard/scientific-calculator', title: 'Calculadora Científica', description: 'Resuelve y explica operaciones.', icon: Calculator },
+    { href: '/dashboard/progress-achievements', title: 'Progreso y Logros', description: 'Muestra tu avance y logros.', icon: TrendingUp },
 ]
 
 export default function DashboardPage() {
@@ -29,8 +34,8 @@ export default function DashboardPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {tools.map((tool) => (
-                    <Link href={tool.href} key={tool.href}>
-                    <Card className="flex h-full flex-col justify-between transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/20">
+                    <Link href={tool.href} key={tool.href} className="flex">
+                    <Card className="flex w-full flex-col justify-between transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/20">
                         <CardHeader>
                             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                                 <tool.icon className="h-6 w-6 text-primary" />

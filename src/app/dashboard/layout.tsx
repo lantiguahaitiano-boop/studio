@@ -61,6 +61,11 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -69,10 +74,12 @@ export default function DashboardLayout({
   }, [user, loading, router]);
   
   useEffect(() => {
-    setIsNavigating(false);
-  }, [pathname]);
+    if (isMounted) {
+      setIsNavigating(false);
+    }
+  }, [pathname, isMounted]);
 
-  if (loading || !user) {
+  if (loading || !user || !isMounted) {
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-background">
             <div className="flex flex-col items-center gap-4">
@@ -104,18 +111,16 @@ export default function DashboardLayout({
             <SidebarMenu>
                 {menuItems.map((item) => 
                     <SidebarMenuItem key={item.href}>
-                        <Link href={item.href} legacyBehavior passHref onClick={() => handleNavigation(item.href)}>
-                            <SidebarMenuButton
-                                asChild
-                                isActive={pathname === item.href}
-                                tooltip={{children: item.label}}
-                            >
-                                <a>
-                                    <item.icon />
-                                    <span>{item.label}</span>
-                                </a>
-                            </SidebarMenuButton>
-                        </Link>
+                        <SidebarMenuButton
+                            as={Link}
+                            href={item.href}
+                            onClick={() => handleNavigation(item.href)}
+                            isActive={pathname === item.href}
+                            tooltip={{children: item.label}}
+                        >
+                            <item.icon />
+                            <span>{item.label}</span>
+                        </SidebarMenuButton>
                     </SidebarMenuItem>
                 )}
             </SidebarMenu>
@@ -145,7 +150,7 @@ export default function DashboardLayout({
                 </div>
               </div>
             )}
-            {children}
+            {!isNavigating && children}
         </main>
       </SidebarInset>
     </SidebarProvider>
