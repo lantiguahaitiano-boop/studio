@@ -13,8 +13,8 @@ import { Loader2, Sparkles, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const formSchema = z.object({
-  text: z.string().min(50, {
-    message: 'El texto debe tener al menos 50 caracteres para generar un cuestionario.',
+  text: z.string().min(100, {
+    message: 'El texto debe tener al menos 100 caracteres para generar un cuestionario.',
   }),
 });
 
@@ -119,13 +119,13 @@ export default function QuizGeneratorPage() {
                   <AccordionTrigger>
                     <div className="flex items-start gap-3 text-left">
                         <HelpCircle className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                        <span>{item.question}</span>
+                        <span>{index + 1}. {item.question}</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="space-y-2 pl-8">
                         {item.options.map((option, optionIndex) => (
-                            <div key={optionIndex} className={`p-2 rounded-md ${option === item.answer ? 'bg-green-500/20' : ''}`}>
+                            <div key={optionIndex} className={`p-2 rounded-md text-sm ${option === item.answer ? 'bg-green-500/20 text-green-200' : 'bg-muted/50'}`}>
                                 {option}
                             </div>
                         ))}

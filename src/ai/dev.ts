@@ -9,3 +9,4 @@ import '@/ai/flows/text-summarizer.ts';
 import '@/ai/flows/quiz-generator.ts';
 import '@/ai/flows/concept-explainer.ts';
 import '@/ai/flows/essay-corrector.ts';
+import '@/ai/flows/exam-creator.ts';
