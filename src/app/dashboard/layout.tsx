@@ -34,6 +34,7 @@ import {
   Newspaper,
   MessageCircleQuestion,
   Settings,
+  Library,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
@@ -51,6 +52,7 @@ const menuItems = [
     { href: '/dashboard/quiz-generator', label: 'Generador de Cuestionarios', icon: HelpCircle },
     { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages },
     { href: '/dashboard/project-planner', label: 'Planificador de Proyectos', icon: ListTodo },
+    { href: '/dashboard/library', label: 'Biblioteca de Recursos', icon: Library },
     { href: '/dashboard/scientific-calculator', label: 'Calculadora Científica Explicada', icon: Calculator },
     { href: '/dashboard/progress-achievements', label: 'Progreso y Logros', icon: TrendingUp },
 ];

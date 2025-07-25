@@ -2,7 +2,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion, Settings } from "lucide-react";
+import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion, Settings, Library } from "lucide-react";
 
 const tools = [
     { href: '/dashboard/task-assistant', title: 'Asistente de Tareas IA', description: 'Ayuda paso a paso con problemas.', icon: BookOpenCheck },
@@ -17,6 +17,7 @@ const tools = [
     { href: '/dashboard/quiz-generator', title: 'Generador de Cuestionarios', description: 'Crea preguntas desde un texto.', icon: HelpCircle },
     { href: '/dashboard/translator', title: 'Traductor Educativo', description: 'Traduce textos con contexto.', icon: Languages },
     { href: '/dashboard/project-planner', title: 'Planificador de Proyectos', description: 'Estructura trabajos de investigación.', icon: ListTodo },
+    { href: '/dashboard/library', title: 'Biblioteca de Recursos', description: 'Accede a libros, artículos y videos.', icon: Library },
     { href: '/dashboard/scientific-calculator', title: 'Calculadora Científica', description: 'Resuelve y explica operaciones.', icon: Calculator },
     { href: '/dashboard/progress-achievements', title: 'Progreso y Logros', description: 'Muestra tu avance y logros.', icon: TrendingUp },
     { href: '/dashboard/settings', title: 'Configuración', description: 'Personaliza tu experiencia.', icon: Settings },

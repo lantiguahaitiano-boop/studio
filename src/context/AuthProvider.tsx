@@ -61,7 +61,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       xp: 0, 
       level: 1,
       toolUsage: {},
-      achievements: []
+      achievements: [],
+      favoriteResources: [],
     };
     users.push(newUser);
     localStorage.setItem('lumenai_users', JSON.stringify(users));
@@ -82,6 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         level: foundUser.level || 1,
         toolUsage: foundUser.toolUsage || {},
         achievements: foundUser.achievements || [],
+        favoriteResources: foundUser.favoriteResources || [],
       };
       updateUserInStorage(userData);
       router.push('/dashboard');
@@ -157,9 +159,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateUserInStorage(updatedUser);
   };
 
+  const toggleFavoriteResource = (resourceId: string) => {
+    if (!user) return;
+    const favorites = user.favoriteResources || [];
+    const newFavorites = favorites.includes(resourceId)
+      ? favorites.filter(id => id !== resourceId)
+      : [...favorites, resourceId];
+    
+    const updatedUser = { ...user, favoriteResources: newFavorites };
+    updateUserInStorage(updatedUser);
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource }}>
       {children}
     </AuthContext.Provider>
   );

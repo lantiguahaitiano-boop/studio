@@ -11,6 +11,7 @@ export interface User {
   level?: number;
   toolUsage?: ToolUsage;
   achievements?: string[];
+  favoriteResources?: string[];
 }
 
 export interface RegisterCredentials extends Omit<User, 'password'> {
@@ -30,4 +31,5 @@ export interface AuthContextType {
   logout: () => void;
   addXP: (amount: number, toolId?: string) => void;
   updateUser?: (newDetails: Partial<User>) => void;
+  toggleFavoriteResource?: (resourceId: string) => void;
 }
