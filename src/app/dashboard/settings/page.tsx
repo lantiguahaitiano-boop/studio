@@ -110,24 +110,26 @@ export default function SettingsPage() {
             <CardTitle>Apariencia</CardTitle>
             <CardDescription>Personaliza el aspecto de la aplicación.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <FormLabel>Tema</FormLabel>
-            <RadioGroup
-              defaultValue="dark"
-              className="grid grid-cols-2 gap-4 pt-2"
-              onValueChange={(value) => setTheme(value as "light" | "dark" | "system")}
-            >
-              <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
-                <RadioGroupItem value="light" className="sr-only" />
-                <Sun className="h-6 w-6" />
-                <span className="mt-2 font-normal">Claro</span>
-              </Label>
-              <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
-                <RadioGroupItem value="dark" className="sr-only" />
-                <Moon className="h-6 w-6" />
-                <span className="mt-2 font-normal">Oscuro</span>
-              </Label>
-            </RadioGroup>
+          <CardContent className="space-y-4">
+             <div className="space-y-2">
+                <Label>Tema</Label>
+                <RadioGroup
+                  defaultValue="dark"
+                  className="grid grid-cols-2 gap-4"
+                  onValueChange={(value) => setTheme(value as "light" | "dark" | "system")}
+                >
+                  <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
+                    <RadioGroupItem value="light" className="sr-only" />
+                    <Sun className="h-6 w-6" />
+                    <span className="mt-2 font-normal">Claro</span>
+                  </Label>
+                  <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
+                    <RadioGroupItem value="dark" className="sr-only" />
+                    <Moon className="h-6 w-6" />
+                    <span className="mt-2 font-normal">Oscuro</span>
+                  </Label>
+                </RadioGroup>
+              </div>
           </CardContent>
         </Card>
       </div>
