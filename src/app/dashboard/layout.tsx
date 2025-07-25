@@ -36,6 +36,7 @@ import {
   Settings,
   Library,
   BrainCircuit,
+  FlaskConical,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
@@ -56,6 +57,7 @@ const menuItems = [
     { href: '/dashboard/library', label: 'Biblioteca de Recursos', icon: Library },
     { href: '/dashboard/scientific-calculator', label: 'Calculadora Científica Explicada', icon: Calculator },
     { href: '/dashboard/mind-map-tool', label: 'Herramienta de Mapas Mentales', icon: BrainCircuit },
+    { href: '/dashboard/virtual-lab', label: 'Laboratorio Virtual', icon: FlaskConical },
     { href: '/dashboard/progress-achievements', label: 'Progreso y Logros', icon: TrendingUp },
 ];
 
