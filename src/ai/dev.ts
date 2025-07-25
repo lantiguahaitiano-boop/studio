@@ -7,3 +7,5 @@ import '@/ai/flows/presentation-creator.ts';
 import '@/ai/flows/ai-chatbot.ts';
 import '@/ai/flows/text-summarizer.ts';
 import '@/ai/flows/quiz-generator.ts';
+import '@/ai/flows/concept-explainer.ts';
+import '@/ai/flows/essay-corrector.ts';

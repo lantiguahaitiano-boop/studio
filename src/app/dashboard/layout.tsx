@@ -25,17 +25,31 @@ import {
   LogOut,
   FileText,
   HelpCircle,
+  Lightbulb,
+  PenSquare,
+  CalendarDays,
+  ListTodo,
+  TrendingUp,
+  Calculator,
+  Newspaper
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
 
 const menuItems = [
     { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck },
+    { href: '/dashboard/text-summarizer', label: 'Resumidor Automático', icon: Newspaper },
+    { href: '/dashboard/study-organizer', label: 'Organizador de Estudio', icon: CalendarDays },
+    { href: '/dashboard/concept-explainer', label: 'Explicador de Conceptos', icon: Lightbulb },
+    { href: '/dashboard/essay-corrector', label: 'Corrector de Ensayos', icon: PenSquare },
     { href: '/dashboard/presentation-creator', label: 'Creador de Exposiciones', icon: Presentation },
     { href: '/dashboard/chatbot', label: 'Chat Privado con IA', icon: BotMessageSquare },
-    { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages },
-    { href: '/dashboard/text-summarizer', label: 'Resumen de Texto', icon: FileText },
+    { href: '/dashboard/exam-creator', label: 'Creador de Exámenes', icon: HelpCircle },
     { href: '/dashboard/quiz-generator', label: 'Generador de Cuestionarios', icon: HelpCircle },
+    { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages },
+    { href: '/dashboard/project-planner', label: 'Planificador de Proyectos', icon: ListTodo },
+    { href: '/dashboard/scientific-calculator', label: 'Calculadora Científica Explicada', icon: Calculator },
+    { href: '/dashboard/progress-achievements', label: 'Progreso y Logros', icon: TrendingUp },
 ];
 
 export default function DashboardLayout({
