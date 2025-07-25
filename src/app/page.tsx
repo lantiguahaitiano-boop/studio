@@ -16,46 +16,6 @@ const features = [
   { icon: Languages, title: 'Traductor Educativo', description: 'Traduce textos académicos con precisión y contexto.' },
 ];
 
-const testimonials = [
-  {
-    name: 'Ana García',
-    role: 'Estudiante de Bachillerato',
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
-    text: 'LumenAI ha cambiado mi forma de estudiar. El Explicador de Conceptos me salvó en mi examen de física. ¡Totalmente recomendado!',
-  },
-  {
-    name: 'Carlos Rodríguez',
-    role: 'Estudiante Universitario',
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704e',
-    text: 'Como estudiante de ingeniería, la Calculadora Científica Explicada es una joya. No solo me da el resultado, sino que me enseña el proceso.',
-  },
-  {
-    name: 'Sofía Martínez',
-    role: 'Estudiante de Máster',
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704f',
-    text: 'El Planificador de Proyectos me ayudó a estructurar mi TFM de una manera increíblemente organizada. Ahorré semanas de trabajo.',
-  },
-];
-
-const faqs = [
-  {
-    question: '¿Qué es LumenAI?',
-    answer: 'LumenAI es una plataforma educativa todo en uno que utiliza inteligencia artificial para ofrecerte herramientas que potencian tu aprendizaje. Desde resolver problemas complejos hasta organizar tus proyectos, LumenAI es tu asistente académico personal.',
-  },
-  {
-    question: '¿Es LumenAI gratuito?',
-    answer: 'Actualmente, LumenAI se encuentra en una fase beta y es completamente gratuito. Queremos que la mayor cantidad de estudiantes prueben nuestras herramientas y nos den su feedback para seguir mejorando.',
-  },
-  {
-    question: '¿Cómo protege LumenAI mi información?',
-    answer: 'Tu privacidad es nuestra máxima prioridad. Todas las interacciones se gestionan de forma segura y tus datos de usuario se almacenan localmente en tu navegador, lo que significa que solo tú tienes acceso a ellos.',
-  },
-   {
-    question: '¿En qué se diferencia LumenAI de otros chatbots de IA?',
-    answer: 'A diferencia de los chatbots genéricos, LumenAI es un ecosistema de herramientas especializadas y diseñadas específicamente para el ámbito educativo. Cada función está pensada para resolver una necesidad concreta del estudiante, desde la escritura de un ensayo hasta la preparación de un examen.',
-  },
-];
-
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -122,65 +82,19 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
-
-        {/* Testimonials Section */}
-        <section className="bg-muted/50 py-12 md:py-24 lg:py-32">
-            <div className="container">
-                <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-                    <h2 className="font-headline text-3xl font-bold md:text-4xl">Lo que dicen nuestros usuarios</h2>
-                    <p className="mt-4 max-w-2xl text-muted-foreground">
-                        Miles de estudiantes ya están transformando su manera de aprender con LumenAI.
-                    </p>
-                </div>
-                <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-                    {testimonials.map((testimonial) => (
-                        <Card key={testimonial.name}>
-                            <CardContent className="pt-6">
-                                <p className="italic">"{testimonial.text}"</p>
-                            </CardContent>
-                             <CardHeader className="flex-row items-center gap-4">
-                                <Avatar>
-                                    <AvatarImage src={testimonial.avatar} alt={testimonial.name}/>
-                                    <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <CardTitle className="text-base font-bold">{testimonial.name}</CardTitle>
-                                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                                </div>
-                            </CardHeader>
-                        </Card>
-                    ))}
-                </div>
-            </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="container py-12 md:py-24 lg:py-32">
-            <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-                <h2 className="font-headline text-3xl font-bold md:text-4xl">Preguntas Frecuentes</h2>
-                <p className="mt-4 max-w-2xl text-muted-foreground">
-                    ¿Tienes dudas? Aquí resolvemos las más comunes.
-                </p>
-            </div>
-            <div className="mx-auto mt-12 max-w-3xl">
-                <Accordion type="single" collapsible className="w-full">
-                    {faqs.map((faq, index) => (
-                        <AccordionItem value={`item-${index}`} key={index}>
-                            <AccordionTrigger className="text-left font-semibold">{faq.question}</AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
-                        </AccordionItem>
-                    ))}
-                </Accordion>
-            </div>
-        </section>
       </main>
 
       <footer className="border-t py-6 md:py-8">
         <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
-           <div className="flex items-center gap-2">
-                <LumenAILogo className="h-6 w-6" />
-                <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-                    © {new Date().getFullYear()} LumenAI. Todos los derechos reservados.
+           <div className="flex flex-col items-center gap-2 md:flex-row">
+                <div className="flex items-center gap-2">
+                    <LumenAILogo className="h-6 w-6" />
+                    <p className="text-sm text-muted-foreground">
+                        © {new Date().getFullYear()} LumenAI. Todos los derechos reservados.
+                    </p>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                    Hecho por Lantigua Productions.
                 </p>
            </div>
            <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -192,5 +106,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-    
