@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { User } from '@/types/auth';
 import { Users, Award, Trophy, Star, ShieldCheck, AlertTriangle } from 'lucide-react';
 
-const ADMIN_SECURITY_KEY = 'lumenadmin';
+const ADMIN_SECURITY_KEY = process.env.NEXT_PUBLIC_ADMIN_SECURITY_KEY;
 
 export default function AdminPage() {
   const { user, loading, getAllUsers } = useAuth();
