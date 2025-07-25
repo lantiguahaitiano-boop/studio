@@ -4,28 +4,32 @@
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { User, Suggestion } from '@/types/auth';
-import { Users, Award, Trophy, ShieldCheck, AlertTriangle, MessageSquareQuote } from 'lucide-react';
+import { User, Suggestion, SuggestionStatus } from '@/types/auth';
+import { Users, Award, Trophy, ShieldCheck, AlertTriangle, MessageSquareQuote, Check, Clock, X, Eye } from 'lucide-react';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Pie, PieChart, Cell } from 'recharts';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 const ADMIN_SECURITY_KEY = process.env.NEXT_PUBLIC_ADMIN_SECURITY_KEY || 'lumenadmin_supersecret_key_123!';
 
 export default function AdminPage() {
-  const { user, loading, getAllUsers, getAllSuggestions } = useAuth();
+  const { user, loading, getAllUsers, getAllSuggestions, updateSuggestionStatus } = useAuth();
   const router = useRouter();
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [isVerified, setIsVerified] = useState(false);
   const [securityKey, setSecurityKey] = useState('');
   const [error, setError] = useState('');
+  
+  // This state is just to force re-renders when a suggestion status changes.
+  const [_, setForceUpdate] = useState(0);
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) {
@@ -88,6 +92,21 @@ export default function AdminPage() {
     } else {
       setError('Clave de seguridad incorrecta.');
     }
+  };
+  
+  const handleStatusChange = (id: string, status: SuggestionStatus) => {
+    if(updateSuggestionStatus) {
+        updateSuggestionStatus(id, status);
+        // This is a workaround to force a re-render of the suggestions list
+        setSuggestions(getAllSuggestions ? getAllSuggestions() : []);
+    }
+  };
+
+  const statusStyles: { [key in SuggestionStatus]: string } = {
+    'Pendiente': 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    'En Revisión': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    'Aceptada': 'bg-green-500/10 text-green-400 border-green-500/20',
+    'Rechazada': 'bg-red-500/10 text-red-400 border-red-500/20',
   };
 
   if (loading || !user || user.role !== 'admin') {
@@ -222,16 +241,29 @@ export default function AdminPage() {
         <CardContent>
           <div className="space-y-4">
             {suggestions.length > 0 ? (
-                suggestions.map((suggestion, index) => (
-                    <div key={index} className="rounded-lg border bg-card p-4">
-                        <p className="text-card-foreground">{suggestion.text}</p>
-                        <div className="mt-2 flex items-center justify-between">
-                            <p className="text-xs text-muted-foreground font-medium">{suggestion.userName} ({suggestion.userEmail})</p>
-                            <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(new Date(suggestion.timestamp), { addSuffix: true, locale: es })}
-                            </p>
-                        </div>
-                    </div>
+                suggestions.map((suggestion) => (
+                    <Card key={suggestion.id}>
+                        <CardContent className="p-4">
+                            <div className="flex justify-between items-start">
+                                <p className="text-card-foreground flex-1 pr-4">{suggestion.text}</p>
+                                <Badge className={cn(statusStyles[suggestion.status])}>{suggestion.status}</Badge>
+                            </div>
+                        </CardContent>
+                        <CardFooter className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 pt-0 gap-4">
+                             <div>
+                                <p className="text-xs text-muted-foreground font-medium">{suggestion.userName}</p>
+                                <p className="text-xs text-muted-foreground">({suggestion.userEmail})</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {formatDistanceToNow(new Date(suggestion.timestamp), { addSuffix: true, locale: es })}
+                                </p>
+                            </div>
+                            <div className="flex gap-2">
+                                <Button variant="outline" size="sm" onClick={() => handleStatusChange(suggestion.id, 'En Revisión')}><Eye className="h-4 w-4 mr-2"/>En Revisión</Button>
+                                <Button variant="outline" size="sm" className="hover:bg-green-500/10" onClick={() => handleStatusChange(suggestion.id, 'Aceptada')}><Check className="h-4 w-4 mr-2"/>Aceptar</Button>
+                                <Button variant="outline" size="sm" className="hover:bg-red-500/10" onClick={() => handleStatusChange(suggestion.id, 'Rechazada')}><X className="h-4 w-4 mr-2"/>Rechazar</Button>
+                            </div>
+                        </CardFooter>
+                    </Card>
                 ))
             ) : (
                 <p className="text-muted-foreground text-center py-4">No hay sugerencias por el momento.</p>

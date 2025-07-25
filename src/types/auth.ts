@@ -24,11 +24,15 @@ export interface LoginCredentials {
   password?: string;
 }
 
+export type SuggestionStatus = 'Pendiente' | 'En Revisión' | 'Aceptada' | 'Rechazada';
+
 export type Suggestion = {
+  id: string;
   text: string;
   userEmail: string;
   userName: string;
   timestamp: string;
+  status: SuggestionStatus;
 };
 
 export interface AuthContextType {
@@ -44,4 +48,5 @@ export interface AuthContextType {
   getAllUsers?: () => User[];
   submitSuggestion?: (text: string) => void;
   getAllSuggestions?: () => Suggestion[];
+  updateSuggestionStatus?: (suggestionId: string, status: SuggestionStatus) => void;
 }

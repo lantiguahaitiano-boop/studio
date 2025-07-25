@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import type { User, AuthContextType, RegisterCredentials, LoginCredentials, Suggestion } from '@/types/auth';
+import type { User, AuthContextType, RegisterCredentials, LoginCredentials, Suggestion, SuggestionStatus } from '@/types/auth';
 import { achievementsList, checkAchievements } from '@/lib/achievements';
 import { useToast } from '@/hooks/use-toast';
 
@@ -199,10 +199,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const suggestions = storedSuggestions ? JSON.parse(storedSuggestions) : [];
     
     const newSuggestion: Suggestion = {
+        id: `sug_${new Date().toISOString()}_${user.email}`,
         text,
         userEmail: user.email,
         userName: user.name,
         timestamp: new Date().toISOString(),
+        status: 'Pendiente',
     };
     
     suggestions.push(newSuggestion);
@@ -218,10 +220,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Return newest suggestions first
     return suggestions.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
+  
+  const updateSuggestionStatus = (suggestionId: string, status: SuggestionStatus) => {
+    if (user?.role !== 'admin') return;
+
+    const storedSuggestions = localStorage.getItem('lumenai_suggestions');
+    let suggestions: Suggestion[] = storedSuggestions ? JSON.parse(storedSuggestions) : [];
+    
+    const suggestionIndex = suggestions.findIndex(s => s.id === suggestionId);
+
+    if (suggestionIndex !== -1) {
+      suggestions[suggestionIndex].status = status;
+      localStorage.setItem('lumenai_suggestions', JSON.stringify(suggestions));
+      // This is a way to trigger a re-render in the admin page.
+      // In a real app with a proper state management library, this would be handled more cleanly.
+      setUser({...user}); 
+    }
+  };
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers, submitSuggestion, getAllSuggestions }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers, submitSuggestion, getAllSuggestions, updateSuggestionStatus }}>
       {children}
     </AuthContext.Provider>
   );
