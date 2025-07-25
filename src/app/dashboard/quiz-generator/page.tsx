@@ -45,7 +45,7 @@ export default function QuizGeneratorPage() {
     try {
       const result = await generateQuiz(values);
       setQuiz(result.questions);
-      addXP(10);
+      addXP(10, 'quiz-generator');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Generador de Cuestionarios!",

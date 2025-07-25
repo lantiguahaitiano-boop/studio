@@ -45,7 +45,7 @@ export default function ScientificCalculatorPage() {
     try {
       const res = await explainMath({ operation: expression, result });
       setExplanation(res.explanation);
-      addXP(10);
+      addXP(10, 'scientific-calculator');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar la Calculadora!",

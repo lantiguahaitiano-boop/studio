@@ -39,7 +39,7 @@ export default function ProjectPlannerPage() {
     try {
       const result = await planProject(values);
       setPlan(result);
-      addXP(10);
+      addXP(10, 'project-planner');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Planificador de Proyectos!",

@@ -58,7 +58,7 @@ export default function ChatbotPage() {
       const result = await askQuestion({ question: values.question });
       const aiMessage: Message = { text: result.answer, sender: 'ai' };
       setMessages((prev) => [...prev.slice(0, -1), aiMessage]);
-      addXP(10);
+      addXP(10, 'chatbot');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Chat con IA!",

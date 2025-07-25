@@ -38,7 +38,7 @@ export default function TaskAssistantPage() {
     try {
       const result = await aiTaskAssistant(values);
       setSolution(result.stepByStepSolution);
-      addXP(10);
+      addXP(10, 'task-assistant');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Asistente de Tareas!",

@@ -54,7 +54,7 @@ export default function TranslatorPage() {
     try {
       const result = await educationalTranslator(values);
       setTranslatedText(result.translatedText);
-      addXP(10);
+      addXP(10, 'translator');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Traductor!",

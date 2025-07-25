@@ -3,7 +3,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import { Progress } from '@/components/ui/progress';
-import { Award, Star, CheckCircle } from 'lucide-react';
+import { Award, Star, CheckCircle, Lock } from 'lucide-react';
+import { achievementsList, Achievement } from '@/lib/achievements';
+import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 const tasks = [
     { description: 'Usa el Asistente de Tareas para resolver un problema.', xp: 10 },
@@ -28,6 +37,8 @@ export default function ProgressAchievementsPage() {
   const xp = user.xp || 0;
   const xpToNextLevel = level * 100;
   const progressPercentage = (xp / xpToNextLevel) * 100;
+  
+  const unlockedAchievements = new Set(user.achievements || []);
 
   return (
     <div className="space-y-6">
@@ -36,7 +47,7 @@ export default function ProgressAchievementsPage() {
         <p className="text-muted-foreground">¡Sigue así! Mira cuánto has avanzado y qué puedes hacer para seguir mejorando.</p>
       </div>
       
-      <Card className="bg-gradient-to-br from-primary/80 to-primary">
+      <Card className="bg-gradient-to-br from-primary/80 to-accent">
           <CardHeader className="flex flex-row items-center justify-between text-primary-foreground">
               <div className="space-y-1">
                   <CardTitle className="font-headline text-3xl">Nivel {level}</CardTitle>
@@ -56,6 +67,44 @@ export default function ProgressAchievementsPage() {
       </Card>
       
       <div className="grid gap-6 md:grid-cols-2">
+         <Card>
+          <CardHeader>
+            <CardTitle>Logros Desbloqueados</CardTitle>
+            <CardDescription>Completa hitos para ganar insignias y XP extra.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TooltipProvider>
+              <div className="grid grid-cols-4 gap-4 md:grid-cols-5 lg:grid-cols-6">
+                {achievementsList.map((ach) => {
+                  const isUnlocked = unlockedAchievements.has(ach.id);
+                  const Icon = ach.icon;
+                  return (
+                    <Tooltip key={ach.id}>
+                      <TooltipTrigger>
+                        <div
+                          className={cn(
+                            "flex aspect-square flex-col items-center justify-center gap-1 rounded-lg border-2 p-2 text-center",
+                            isUnlocked
+                              ? "border-primary/50 bg-primary/10 text-primary"
+                              : "border-dashed bg-muted/50 text-muted-foreground"
+                          )}
+                        >
+                          <Icon className="h-8 w-8" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="font-bold">{ach.name}</p>
+                        <p className="text-sm text-muted-foreground">{ach.description}</p>
+                         {!isUnlocked && <p className="text-xs text-primary">¡Bloqueado!</p>}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            </TooltipProvider>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Tareas para ganar XP</CardTitle>
@@ -77,22 +126,7 @@ export default function ProgressAchievementsPage() {
             </ul>
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Logros Desbloqueados</CardTitle>
-            <CardDescription>Próximamente: ¡Colecciona insignias únicas por tus hitos!</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center text-center">
-            <div className="flex h-48 w-full flex-col items-center justify-center rounded-lg border-2 border-dashed bg-muted/50 p-8">
-                <Award className="h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 font-semibold">Sistema de Logros en desarrollo</h3>
-                <p className="mt-1 text-sm text-muted-foreground">Estamos creando insignias especiales para recompensar tu esfuerzo.</p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-
     </div>
   );
 }

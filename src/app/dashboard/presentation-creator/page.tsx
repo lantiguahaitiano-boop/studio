@@ -42,7 +42,7 @@ export default function PresentationCreatorPage() {
     try {
       const result = await createPresentation(values);
       setSlides(result.slides);
-      addXP(10);
+      addXP(10, 'presentation-creator');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Creador de Exposiciones!",

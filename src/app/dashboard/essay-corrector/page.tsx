@@ -38,7 +38,7 @@ export default function EssayCorrectorPage() {
     try {
       const result = await correctEssay(values);
       setCorrectedText(result.correctedText);
-      addXP(10);
+      addXP(10, 'essay-corrector');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Corrector de Ensayos!",

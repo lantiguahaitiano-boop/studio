@@ -38,7 +38,7 @@ export default function ConceptExplainerPage() {
     try {
       const result = await explainConcept(values);
       setExplanation(result.explanation);
-      addXP(10);
+      addXP(10, 'concept-explainer');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Explicador de Conceptos!",

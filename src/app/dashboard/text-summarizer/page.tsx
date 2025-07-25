@@ -38,7 +38,7 @@ export default function TextSummarizerPage() {
     try {
       const result = await summarizeText(values);
       setSummary(result.summary);
-      addXP(10);
+      addXP(10, 'text-summarizer');
        toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Resumidor de Texto!",

@@ -1,3 +1,7 @@
+export type ToolUsage = {
+  [key: string]: number;
+};
+
 export interface User {
   name: string;
   email: string;
@@ -5,6 +9,8 @@ export interface User {
   educationLevel: string;
   xp?: number;
   level?: number;
+  toolUsage?: ToolUsage;
+  achievements?: string[];
 }
 
 export interface RegisterCredentials extends Omit<User, 'password'> {
@@ -22,6 +28,6 @@ export interface AuthContextType {
   register: (credentials: RegisterCredentials) => boolean;
   login: (credentials: LoginCredentials) => boolean;
   logout: () => void;
-  addXP: (amount: number) => void;
+  addXP: (amount: number, toolId?: string) => void;
   updateUser?: (newDetails: Partial<User>) => void;
 }

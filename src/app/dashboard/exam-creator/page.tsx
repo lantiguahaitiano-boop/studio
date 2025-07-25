@@ -48,7 +48,7 @@ export default function ExamCreatorPage() {
     try {
       const result = await generateExam(values);
       setExam(result.questions);
-      addXP(10);
+      addXP(10, 'exam-creator');
       toast({
         title: "✨ +10 XP",
         description: "¡Has ganado experiencia por usar el Creador de Exámenes!",
