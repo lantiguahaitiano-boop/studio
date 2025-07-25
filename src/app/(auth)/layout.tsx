@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { LumenAILogo } from "@/components/icons/LumenAILogo";
 
 export default function AuthLayout({
@@ -10,7 +11,10 @@ export default function AuthLayout({
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
             <LumenAILogo className="h-16 w-16 mb-4" />
-          <h1 className="font-headline text-4xl font-bold text-primary">LumenAI</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="font-headline text-4xl font-bold text-primary">LumenAI</h1>
+            <Badge variant="secondary">BETA</Badge>
+          </div>
           <p className="text-muted-foreground">Tu asistente educativo inteligente.</p>
         </div>
         {children}

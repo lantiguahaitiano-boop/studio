@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { BookOpenCheck, BotMessageSquare, Lightbulb, Presentation, PenSquare, Languages } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 const features = [
   { icon: BookOpenCheck, title: 'Asistente de Tareas', description: 'Soluciones paso a paso para cualquier problema académico.' },
@@ -23,7 +24,10 @@ export default function LandingPage() {
         <div className="container flex h-14 items-center">
           <Link href="#" className="mr-6 flex items-center space-x-2">
             <LumenAILogo className="h-8 w-8" />
-            <span className="font-bold sm:inline-block font-headline text-2xl">LumenAI</span>
+            <div className="flex items-center gap-2">
+                <span className="font-bold sm:inline-block font-headline text-2xl">LumenAI</span>
+                <Badge variant="secondary">BETA</Badge>
+            </div>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-1">

@@ -1,6 +1,8 @@
 
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function TermsOfServicePage() {
   return (
@@ -9,7 +11,10 @@ export default function TermsOfServicePage() {
         <div className="container flex h-14 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <LumenAILogo className="h-8 w-8" />
-            <span className="font-bold sm:inline-block font-headline text-2xl">LumenAI</span>
+             <div className="flex items-center gap-2">
+                <span className="font-bold sm:inline-block font-headline text-2xl">LumenAI</span>
+                <Badge variant="secondary">BETA</Badge>
+            </div>
           </Link>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-1">

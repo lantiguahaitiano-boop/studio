@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
+import { Badge } from '@/components/ui/badge';
 
 const menuItems = [
     { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck },
@@ -112,9 +113,12 @@ export default function DashboardLayout({
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <LumenAILogo className="size-8" />
-            <h1 className="font-headline text-2xl font-bold text-primary group-data-[collapsible=icon]:hidden">
-              LumenAI
-            </h1>
+            <div className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
+                <h1 className="font-headline text-2xl font-bold text-primary">
+                LumenAI
+                </h1>
+                <Badge variant="secondary" className="text-xs">BETA</Badge>
+            </div>
           </div>
         </SidebarHeader>
         <SidebarContent>
