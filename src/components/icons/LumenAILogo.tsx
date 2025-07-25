@@ -1,4 +1,4 @@
-import * from 'react';
+import * as React from 'react';
 
 export function LumenAILogo(props: React.SVGProps<SVGSVGElement>) {
   return (
