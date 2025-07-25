@@ -22,36 +22,16 @@ import {
   Presentation,
   BotMessageSquare,
   Languages,
-  FileText,
-  Calendar,
-  Cpu,
-  FileCheck,
-  FileQuestion,
-  RefreshCw,
-  ListChecks,
-  Calculator,
   LogOut,
-  Trophy,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { LumenAILogo } from '@/components/icons/LumenAILogo';
-import { Separator } from '@/components/ui/separator';
 
 const menuItems = [
     { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck, implemented: true },
     { href: '/dashboard/presentation-creator', label: 'Creador de Exposiciones', icon: Presentation, implemented: true },
     { href: '/dashboard/chatbot', label: 'Chat Privado con IA', icon: BotMessageSquare, implemented: true },
     { href: '/dashboard/translator', label: 'Traductor Educativo', icon: Languages, implemented: true },
-    { type: 'separator' },
-    { href: '#', label: 'Resumidor Automático', icon: FileText, implemented: false },
-    { href: '#', label: 'Organizador de Estudio', icon: Calendar, implemented: false },
-    { href: '#', label: 'Explicador de Conceptos', icon: Cpu, implemented: false },
-    { href: '#', label: 'Corrector de Ensayos', icon: FileCheck, implemented: false },
-    { href: '#', label: 'Creador de Exámenes', icon: FileQuestion, implemented: false },
-    { href: '#', label: 'Generador de Cuestionarios', icon: RefreshCw, implemented: false },
-    { href: '#', label: 'Planificador de Proyectos', icon: ListChecks, implemented: false },
-    { href: '#', label: 'Calculadora Científica', icon: Calculator, implemented: false },
-    { href: '#', label: 'Progreso y Logros', icon: Trophy, implemented: false },
 ];
 
 export default function DashboardLayout({
@@ -93,10 +73,7 @@ export default function DashboardLayout({
         </SidebarHeader>
         <SidebarContent>
             <SidebarMenu>
-                {menuItems.map((item, index) => 
-                    item.type === 'separator' ? (
-                        <Separator key={index} className="my-2" />
-                    ) : (
+                {menuItems.map((item) => 
                     <SidebarMenuItem key={item.href}>
                         <Link href={item.href} legacyBehavior passHref>
                             <SidebarMenuButton
@@ -112,7 +89,6 @@ export default function DashboardLayout({
                             </SidebarMenuButton>
                         </Link>
                     </SidebarMenuItem>
-                    )
                 )}
             </SidebarMenu>
         </SidebarContent>
