@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Loader2, Sparkles, Lightbulb } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   concept: z.string().min(5, {
@@ -20,6 +22,8 @@ const formSchema = z.object({
 export default function ConceptExplainerPage() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,6 +38,11 @@ export default function ConceptExplainerPage() {
     try {
       const result = await explainConcept(values);
       setExplanation(result.explanation);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Explicador de Conceptos!",
+      });
     } catch (error) {
       console.error(error);
       setExplanation('Se produjo un error al generar la explicación. Por favor, inténtalo de nuevo.');

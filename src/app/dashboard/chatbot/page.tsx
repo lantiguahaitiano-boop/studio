@@ -12,6 +12,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Send, User, Bot, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   question: z.string().min(1),
@@ -26,6 +28,8 @@ type Message = {
 export default function ChatbotPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,6 +58,11 @@ export default function ChatbotPage() {
       const result = await askQuestion({ question: values.question });
       const aiMessage: Message = { text: result.answer, sender: 'ai' };
       setMessages((prev) => [...prev.slice(0, -1), aiMessage]);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Chat con IA!",
+      });
     } catch (error) {
       console.error(error);
       const errorMessage: Message = {

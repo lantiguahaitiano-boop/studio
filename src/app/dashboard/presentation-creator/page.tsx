@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Loader2, Sparkles } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: 'El tema debe tener al menos 3 caracteres.' }),
@@ -23,6 +25,8 @@ type FormValues = z.infer<typeof formSchema>;
 export default function PresentationCreatorPage() {
   const [slides, setSlides] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,6 +42,11 @@ export default function PresentationCreatorPage() {
     try {
       const result = await createPresentation(values);
       setSlides(result.slides);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Creador de Exposiciones!",
+      });
     } catch (error) {
       console.error(error);
       // Handle error display

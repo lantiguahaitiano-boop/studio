@@ -12,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, ArrowRightLeft } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   text: z.string().min(5, { message: 'El texto debe tener al menos 5 caracteres.' }),
@@ -34,6 +36,8 @@ const languages = [
 export default function TranslatorPage() {
   const [translatedText, setTranslatedText] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -50,6 +54,11 @@ export default function TranslatorPage() {
     try {
       const result = await educationalTranslator(values);
       setTranslatedText(result.translatedText);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Traductor!",
+      });
     } catch (error) {
       console.error(error);
       setTranslatedText('Se produjo un error al traducir. Por favor, inténtalo de nuevo.');

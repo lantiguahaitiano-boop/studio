@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles, PenSquare } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   text: z.string().min(50, {
@@ -20,6 +22,8 @@ const formSchema = z.object({
 export default function EssayCorrectorPage() {
   const [correctedText, setCorrectedText] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,6 +38,11 @@ export default function EssayCorrectorPage() {
     try {
       const result = await correctEssay(values);
       setCorrectedText(result.correctedText);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Corrector de Ensayos!",
+      });
     } catch (error) {
       console.error(error);
       setCorrectedText('Se produjo un error al corregir el texto. Por favor, inténtalo de nuevo.');

@@ -3,6 +3,8 @@ export interface User {
   email: string;
   password?: string; // Password should not be stored in the main user object in a real app
   educationLevel: string;
+  xp?: number;
+  level?: number;
 }
 
 export interface RegisterCredentials extends Omit<User, 'password'> {
@@ -20,4 +22,5 @@ export interface AuthContextType {
   register: (credentials: RegisterCredentials) => boolean;
   login: (credentials: LoginCredentials) => boolean;
   logout: () => void;
+  addXP: (amount: number) => void;
 }

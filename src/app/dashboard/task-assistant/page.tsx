@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   problemDescription: z.string().min(10, {
@@ -20,6 +22,8 @@ const formSchema = z.object({
 export default function TaskAssistantPage() {
   const [solution, setSolution] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,6 +38,11 @@ export default function TaskAssistantPage() {
     try {
       const result = await aiTaskAssistant(values);
       setSolution(result.stepByStepSolution);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Asistente de Tareas!",
+      });
     } catch (error) {
       console.error(error);
       setSolution('Se produjo un error al generar la solución. Por favor, inténtalo de nuevo.');

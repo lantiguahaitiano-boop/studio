@@ -25,6 +25,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  const updateUserInStorage = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('lumenai_user', JSON.stringify(updatedUser));
+  }
+
   const register = ({ name, email, password, educationLevel }: RegisterCredentials): boolean => {
     const storedUsers = localStorage.getItem('lumenai_users');
     const users = storedUsers ? JSON.parse(storedUsers) : [];
@@ -33,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return false; // User already exists
     }
 
-    const newUser: User = { name, email, password, educationLevel };
+    const newUser: User = { name, email, password, educationLevel, xp: 0, level: 1 };
     users.push(newUser);
     localStorage.setItem('lumenai_users', JSON.stringify(users));
     return true;
@@ -45,9 +50,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const foundUser = users.find((u: User) => u.email === email && u.password === password);
 
     if (foundUser) {
-      const userData = { name: foundUser.name, email: foundUser.email, educationLevel: foundUser.educationLevel };
-      localStorage.setItem('lumenai_user', JSON.stringify(userData));
-      setUser(userData);
+      const userData: User = { 
+        name: foundUser.name, 
+        email: foundUser.email, 
+        educationLevel: foundUser.educationLevel,
+        xp: foundUser.xp || 0,
+        level: foundUser.level || 1,
+      };
+      updateUserInStorage(userData);
       router.push('/dashboard');
       return true;
     }
@@ -60,8 +70,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
 
+  const addXP = (amount: number) => {
+    if (!user) return;
+
+    const newXP = (user.xp || 0) + amount;
+    const currentLevel = user.level || 1;
+    const xpToNextLevel = currentLevel * 100;
+
+    let newLevel = currentLevel;
+    let xpForNext = newXP;
+
+    if (xpForNext >= xpToNextLevel) {
+        newLevel += 1;
+        xpForNext -= xpToNextLevel;
+    }
+    
+    const updatedUser: User = {
+        ...user,
+        xp: xpForNext,
+        level: newLevel,
+    };
+    updateUserInStorage(updatedUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP }}>
       {children}
     </AuthContext.Provider>
   );

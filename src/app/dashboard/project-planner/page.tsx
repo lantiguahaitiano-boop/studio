@@ -11,6 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Loader2, Sparkles, BookCheck, ClipboardList } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   topic: z.string().min(10, {
@@ -21,6 +23,8 @@ const formSchema = z.object({
 export default function ProjectPlannerPage() {
   const [plan, setPlan] = useState<PlanProjectOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,6 +39,11 @@ export default function ProjectPlannerPage() {
     try {
       const result = await planProject(values);
       setPlan(result);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar el Planificador de Proyectos!",
+      });
     } catch (error) {
       console.error(error);
       // Handle error display

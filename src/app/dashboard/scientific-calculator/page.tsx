@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Sparkles, BrainCircuit } from 'lucide-react';
 import { explainMath } from '@/ai/flows/math-explainer';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ScientificCalculatorPage() {
   const [expression, setExpression] = useState('');
@@ -14,6 +16,8 @@ export default function ScientificCalculatorPage() {
   const [error, setError] = useState<string | null>(null);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [isExplaining, setIsExplaining] = useState(false);
+  const { addXP } = useAuth();
+  const { toast } = useToast();
 
   const handleButtonClick = (value: string) => {
     setExpression((prev) => prev + value);
@@ -41,6 +45,11 @@ export default function ScientificCalculatorPage() {
     try {
       const res = await explainMath({ operation: expression, result });
       setExplanation(res.explanation);
+      addXP(10);
+      toast({
+        title: "✨ +10 XP",
+        description: "¡Has ganado experiencia por usar la Calculadora!",
+      });
     } catch (error) {
       console.error(error);
       setExplanation('No se pudo generar una explicación en este momento.');
