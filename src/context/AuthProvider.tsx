@@ -26,8 +26,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const updateUserInStorage = (updatedUser: User) => {
+    // Update the active user session
     setUser(updatedUser);
     localStorage.setItem('lumenai_user', JSON.stringify(updatedUser));
+    
+    // Persist changes to the main user list
+    const storedUsers = localStorage.getItem('lumenai_users');
+    const users = storedUsers ? JSON.parse(storedUsers) : [];
+    const userIndex = users.findIndex((u: User) => u.email === updatedUser.email);
+
+    if (userIndex !== -1) {
+      // Update only the fields that can change (name, level, xp, etc.), preserving the password
+      users[userIndex] = { ...users[userIndex], ...updatedUser };
+      localStorage.setItem('lumenai_users', JSON.stringify(users));
+    }
   }
 
   const register = ({ name, email, password, educationLevel }: RegisterCredentials): boolean => {
