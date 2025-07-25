@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ShieldCheck } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -27,8 +27,10 @@ const profileFormSchema = z.object({
   educationLevel: z.string({ required_error: "Por favor, selecciona tu nivel educativo." }),
 });
 
+const ADMIN_EMAIL = 'lantiguayordaly76@gmail.com';
+
 export default function SettingsPage() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, forceRoleSync } = useAuth();
   const { setTheme } = useTheme();
   const { toast } = useToast();
 
@@ -47,6 +49,16 @@ export default function SettingsPage() {
         title: "Perfil Actualizado",
         description: "Tus datos han sido guardados correctamente.",
       });
+    }
+  }
+
+  function handleRoleSync() {
+    if (forceRoleSync) {
+        forceRoleSync();
+        toast({
+            title: "Rol Sincronizado",
+            description: "Tu rol de administrador ha sido verificado y actualizado. Puede que necesites recargar la página.",
+        });
     }
   }
 
@@ -105,33 +117,50 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Apariencia</CardTitle>
-            <CardDescription>Personaliza el aspecto de la aplicación.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-             <div className="space-y-2">
-                <Label>Tema</Label>
-                <RadioGroup
-                  defaultValue="dark"
-                  className="grid grid-cols-2 gap-4"
-                  onValueChange={(value) => setTheme(value as "light" | "dark" | "system")}
-                >
-                  <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
-                    <RadioGroupItem value="light" className="sr-only" />
-                    <Sun className="h-6 w-6" />
-                    <span className="mt-2 font-normal">Claro</span>
-                  </Label>
-                  <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
-                    <RadioGroupItem value="dark" className="sr-only" />
-                    <Moon className="h-6 w-6" />
-                    <span className="mt-2 font-normal">Oscuro</span>
-                  </Label>
-                </RadioGroup>
-              </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Apariencia</CardTitle>
+                <CardDescription>Personaliza el aspecto de la aplicación.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                 <div className="space-y-2">
+                    <Label>Tema</Label>
+                    <RadioGroup
+                      defaultValue="dark"
+                      className="grid grid-cols-2 gap-4"
+                      onValueChange={(value) => setTheme(value as "light" | "dark" | "system")}
+                    >
+                      <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
+                        <RadioGroupItem value="light" className="sr-only" />
+                        <Sun className="h-6 w-6" />
+                        <span className="mt-2 font-normal">Claro</span>
+                      </Label>
+                      <Label className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary">
+                        <RadioGroupItem value="dark" className="sr-only" />
+                        <Moon className="h-6 w-6" />
+                        <span className="mt-2 font-normal">Oscuro</span>
+                      </Label>
+                    </RadioGroup>
+                  </div>
+              </CardContent>
+            </Card>
+
+            {user?.email === ADMIN_EMAIL && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Opciones de Administrador</CardTitle>
+                  <CardDescription>Herramientas especiales para la gestión de la cuenta.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button onClick={handleRoleSync} variant="outline">
+                        <ShieldCheck className="mr-2 h-4 w-4" />
+                        Forzar Sincronización de Rol
+                    </Button>
+                </CardContent>
+              </Card>
+            )}
+        </div>
       </div>
     </div>
   );

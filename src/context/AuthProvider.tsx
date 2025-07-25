@@ -36,14 +36,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('lumenai_user', JSON.stringify(updatedUser));
     
     // Persist changes to the main user list
-    const storedUsers = localStorage.getItem('lumenai_users');
-    const users = storedUsers ? JSON.parse(storedUsers) : [];
-    const userIndex = users.findIndex((u: User) => u.email === updatedUser.email);
+    try {
+        const storedUsers = localStorage.getItem('lumenai_users');
+        const users = storedUsers ? JSON.parse(storedUsers) : [];
+        const userIndex = users.findIndex((u: User) => u.email === updatedUser.email);
 
-    if (userIndex !== -1) {
-      // Update only the fields that can change, preserving the password
-      users[userIndex] = { ...users[userIndex], ...updatedUser };
-      localStorage.setItem('lumenai_users', JSON.stringify(users));
+        if (userIndex !== -1) {
+          // Update the user in the list, preserving the password if it exists
+          const existingUser = users[userIndex];
+          users[userIndex] = { ...existingUser, ...updatedUser };
+          localStorage.setItem('lumenai_users', JSON.stringify(users));
+        }
+    } catch (error) {
+        console.error("Failed to update user list in localStorage", error);
     }
   }
 
@@ -78,17 +83,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const foundUser = users.find((u: User) => u.email === email && u.password === password);
 
     if (foundUser) {
-      const userData: User = { 
-        name: foundUser.name, 
-        email: foundUser.email, 
-        educationLevel: foundUser.educationLevel,
-        xp: foundUser.xp || 0,
-        level: foundUser.level || 1,
-        toolUsage: foundUser.toolUsage || {},
-        achievements: foundUser.achievements || [],
-        favoriteResources: foundUser.favoriteResources || [],
-        role: email === ADMIN_EMAIL ? 'admin' : (foundUser.role || 'user'),
+      // Always re-check and assign role on login to ensure it's correct
+      const userRole = email === ADMIN_EMAIL ? 'admin' : (foundUser.role || 'user');
+      
+      const userData: User = {
+        // Use existing data but ensure role is updated
+        ...foundUser,
+        role: userRole,
       };
+
       updateUserInStorage(userData);
       router.push('/dashboard');
       return true;
@@ -100,6 +103,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('lumenai_user');
     setUser(null);
     router.push('/login');
+  };
+  
+  const forceRoleSync = () => {
+      if (!user) return;
+      const userRole = user.email === ADMIN_EMAIL ? 'admin' : 'user';
+      if (user.role !== userRole) {
+        updateUser({ role: userRole });
+      }
   };
 
   const addXP = (amount: number, toolId?: string) => {
@@ -176,7 +187,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync }}>
       {children}
     </AuthContext.Provider>
   );
