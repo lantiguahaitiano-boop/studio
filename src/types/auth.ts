@@ -34,4 +34,5 @@ export interface AuthContextType {
   updateUser?: (newDetails: Partial<User>) => void;
   toggleFavoriteResource?: (resourceId: string) => void;
   forceRoleSync?: () => void;
+  getAllUsers?: () => User[];
 }

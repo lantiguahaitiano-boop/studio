@@ -184,10 +184,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const updatedUser = { ...user, favoriteResources: newFavorites };
     updateUserInStorage(updatedUser);
   };
+  
+  const getAllUsers = (): User[] => {
+    if (user?.role !== 'admin') {
+      return [];
+    }
+    const storedUsers = localStorage.getItem('lumenai_users');
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  };
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers }}>
       {children}
     </AuthContext.Provider>
   );
