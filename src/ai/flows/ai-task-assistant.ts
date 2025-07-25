@@ -8,7 +8,7 @@
  * - AiTaskAssistantOutput - The return type for the aiTaskAssistant function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, googleAI} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AiTaskAssistantInputSchema = z.object({
@@ -39,6 +39,7 @@ const prompt = ai.definePrompt({
 
   Provide a detailed, step-by-step solution to the problem. Explain each step clearly and concisely.
   `,
+  model: googleAI.model('gemini-1.5-flash-latest'),
 });
 
 const aiTaskAssistantFlow = ai.defineFlow(

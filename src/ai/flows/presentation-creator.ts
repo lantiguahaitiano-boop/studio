@@ -8,7 +8,7 @@
  * - CreatePresentationOutput - The return type for the createPresentation function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, googleAI} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const CreatePresentationInputSchema = z.object({
@@ -38,6 +38,7 @@ Number of slides: {{{slideCount}}}
 Generate the content for each slide. The content should be concise and informative.
 
 Output the slides as a JSON array of strings.`,
+  model: googleAI.model('gemini-1.5-flash-latest'),
 });
 
 const createPresentationFlow = ai.defineFlow(

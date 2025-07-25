@@ -2,7 +2,7 @@
 
 'use server';
 
-import {ai} from '@/ai/genkit';
+import {ai, googleAI} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const EducationalTranslatorInputSchema = z.object({
@@ -26,6 +26,7 @@ const prompt = ai.definePrompt({
   input: {schema: EducationalTranslatorInputSchema},
   output: {schema: EducationalTranslatorOutputSchema},
   prompt: `Translate the following academic text to {{targetLanguage}}.\n\nText: {{{text}}}\n\n{% if context %}Context: {{{context}}}{% endif %}`,
+  model: googleAI.model('gemini-1.5-flash-latest'),
 });
 
 const educationalTranslatorFlow = ai.defineFlow(

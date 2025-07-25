@@ -8,7 +8,7 @@
  * - AskQuestionOutput - The return type for the askQuestion function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, googleAI} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AskQuestionInputSchema = z.object({
@@ -33,6 +33,7 @@ const prompt = ai.definePrompt({
 
   Question: {{{question}}}
   Answer: `,
+  model: googleAI.model('gemini-1.5-flash-latest'),
 });
 
 const askQuestionFlow = ai.defineFlow(
