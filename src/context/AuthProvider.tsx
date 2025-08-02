@@ -2,6 +2,17 @@
 
 import React, { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+  User as FirebaseUser
+} from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 import type { User, AuthContextType, RegisterCredentials, LoginCredentials, Suggestion, SuggestionStatus } from '@/types/auth';
 import { achievementsList, checkAchievements } from '@/lib/achievements';
 import { useToast } from '@/hooks/use-toast';
@@ -17,106 +28,137 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('lumenai_user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userDocRef = doc(db, 'users', firebaseUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setUser({ uid: firebaseUser.uid, ...userDoc.data() } as User);
+        } else {
+            // This case handles users created via Google Sign-In for the first time
+            const newUser: User = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email!,
+                name: firebaseUser.displayName!,
+                educationLevel: 'No especificado',
+                xp: 0,
+                level: 1,
+                toolUsage: {},
+                achievements: [],
+                favoriteResources: [],
+                role: firebaseUser.email === ADMIN_EMAIL ? 'admin' : 'user',
+            };
+            await setDoc(userDocRef, newUser);
+            setUser(newUser);
+        }
+      } else {
+        setUser(null);
       }
-    } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem('lumenai_user');
-    } finally {
       setLoading(false);
-    }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const updateUserInStorage = (updatedUser: User) => {
-    // Update the active user session
-    setUser(updatedUser);
-    localStorage.setItem('lumenai_user', JSON.stringify(updatedUser));
-    
-    // Persist changes to the main user list
+  const register = async ({ name, email, password, educationLevel }: RegisterCredentials): Promise<boolean> => {
+    if (!password) return false;
     try {
-        const storedUsers = localStorage.getItem('lumenai_users');
-        const users = storedUsers ? JSON.parse(storedUsers) : [];
-        const userIndex = users.findIndex((u: User) => u.email === updatedUser.email);
-
-        if (userIndex !== -1) {
-          // Update the user in the list, preserving the password if it exists
-          const existingUser = users[userIndex];
-          users[userIndex] = { ...existingUser, ...updatedUser };
-          localStorage.setItem('lumenai_users', JSON.stringify(users));
-        }
-    } catch (error) {
-        console.error("Failed to update user list in localStorage", error);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      const newUser: Omit<User, 'uid'> = {
+        name,
+        email,
+        educationLevel,
+        xp: 0,
+        level: 1,
+        toolUsage: {},
+        achievements: [],
+        favoriteResources: [],
+        role: email === ADMIN_EMAIL ? 'admin' : 'user',
+      };
+      
+      await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
+      return true;
+    } catch (error: any) {
+      console.error("Error during registration:", error);
+      toast({
+          variant: "destructive",
+          title: "Error de registro",
+          description: error.code === 'auth/email-already-in-use' 
+              ? "Este correo electrónico ya está en uso."
+              : "Ocurrió un error inesperado.",
+      });
+      return false;
     }
-  }
-
-  const register = ({ name, email, password, educationLevel }: RegisterCredentials): boolean => {
-    const storedUsers = localStorage.getItem('lumenai_users');
-    const users = storedUsers ? JSON.parse(storedUsers) : [];
-
-    if (users.find((u: User) => u.email === email)) {
-      return false; // User already exists
-    }
-
-    const newUser: User = { 
-      name, 
-      email, 
-      password, 
-      educationLevel, 
-      xp: 0, 
-      level: 1,
-      toolUsage: {},
-      achievements: [],
-      favoriteResources: [],
-      role: email === ADMIN_EMAIL ? 'admin' : 'user',
-    };
-    users.push(newUser);
-    localStorage.setItem('lumenai_users', JSON.stringify(users));
-    return true;
   };
 
-  const login = ({ email, password }: LoginCredentials): boolean => {
-    const storedUsers = localStorage.getItem('lumenai_users');
-    const users = storedUsers ? JSON.parse(storedUsers) : [];
-    const foundUser = users.find((u: User) => u.email === email && u.password === password);
-
-    if (foundUser) {
-      // Always re-check and assign role on login to ensure it's correct
-      const userRole = email === ADMIN_EMAIL ? 'admin' : (foundUser.role || 'user');
-      
-      const userData: User = {
-        // Use existing data but ensure role is updated
-        ...foundUser,
-        role: userRole,
-      };
-
-      updateUserInStorage(userData);
+  const login = async ({ email, password }: LoginCredentials): Promise<boolean> => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard');
       return true;
+    } catch (error) {
+      console.error("Error during login:", error);
+      return false;
     }
-    return false;
   };
 
-  const logout = () => {
-    localStorage.removeItem('lumenai_user');
-    setUser(null);
+  const signInWithGoogle = async (): Promise<boolean> => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+      
+      // Check if user exists in Firestore, if not create a new document
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        const newUser: Omit<User, 'uid'> = {
+            email: firebaseUser.email!,
+            name: firebaseUser.displayName!,
+            educationLevel: 'No especificado',
+            xp: 0,
+            level: 1,
+            toolUsage: {},
+            achievements: [],
+            favoriteResources: [],
+            role: firebaseUser.email === ADMIN_EMAIL ? 'admin' : 'user',
+        };
+        await setDoc(userDocRef, newUser);
+      }
+      
+      router.push('/dashboard');
+      return true;
+    } catch (error) {
+        console.error("Error during Google sign-in:", error);
+        return false;
+    }
+  };
+
+  const logout = async () => {
+    await signOut(auth);
     router.push('/login');
   };
   
-  const forceRoleSync = () => {
-      if (!user) return;
+  const forceRoleSync = async () => {
+      if (!user || !user.uid) return;
       const userRole = user.email === ADMIN_EMAIL ? 'admin' : 'user';
       if (user.role !== userRole) {
-        updateUser({ role: userRole });
+        await updateUser({ role: userRole });
       }
   };
 
-  const addXP = (amount: number, toolId?: string) => {
-    if (!user) return;
+  const addXP = async (amount: number, toolId?: string) => {
+    if (!user || !user.uid) return;
 
-    let updatedUser = { ...user };
+    // We fetch the latest user data to avoid race conditions
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+    if (!userDoc.exists()) return;
+
+    let updatedUser = userDoc.data() as User;
     
     // Update tool usage
     if (toolId) {
@@ -164,83 +206,74 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     updatedUser.xp = xpForNext;
     updatedUser.level = newLevel;
-
-    updateUserInStorage(updatedUser);
+    
+    // Persist changes to Firestore
+    await updateDoc(userDocRef, updatedUser);
+    setUser({...updatedUser, uid: user.uid }); // Update local state
   };
 
-  const updateUser = (newDetails: Partial<User>) => {
-    if (!user) return;
-    const updatedUser = { ...user, ...newDetails };
-    updateUserInStorage(updatedUser);
+  const updateUser = async (newDetails: Partial<User>) => {
+    if (!user || !user.uid) return;
+    const userDocRef = doc(db, 'users', user.uid);
+    await updateDoc(userDocRef, newDetails);
+    setUser(prevUser => prevUser ? ({ ...prevUser, ...newDetails }) : null);
   };
 
-  const toggleFavoriteResource = (resourceId: string) => {
-    if (!user) return;
+  const toggleFavoriteResource = async (resourceId: string) => {
+    if (!user || !user.uid) return;
     const favorites = user.favoriteResources || [];
     const newFavorites = favorites.includes(resourceId)
       ? favorites.filter(id => id !== resourceId)
       : [...favorites, resourceId];
     
-    const updatedUser = { ...user, favoriteResources: newFavorites };
-    updateUserInStorage(updatedUser);
+    await updateUser({ favoriteResources: newFavorites });
   };
   
-  const getAllUsers = (): User[] => {
-    if (user?.role !== 'admin') {
-      return [];
-    }
-    const storedUsers = localStorage.getItem('lumenai_users');
-    return storedUsers ? JSON.parse(storedUsers) : [];
+  const getAllUsers = async (): Promise<User[]> => {
+    if (user?.role !== 'admin') return [];
+    const usersCol = collection(db, 'users');
+    const userSnapshot = await getDocs(usersCol);
+    const userList = userSnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id } as User));
+    return userList;
   };
   
-  const submitSuggestion = (text: string) => {
+  const submitSuggestion = async (text: string) => {
     if (!user) return;
-    const storedSuggestions = localStorage.getItem('lumenai_suggestions');
-    const suggestions = storedSuggestions ? JSON.parse(storedSuggestions) : [];
-    
-    const newSuggestion: Suggestion = {
-        id: `sug_${new Date().toISOString()}_${user.email}`,
+    const newSuggestion = {
         text,
         userEmail: user.email,
         userName: user.name,
-        timestamp: new Date().toISOString(),
+        timestamp: Timestamp.now(),
         status: 'Pendiente',
     };
-    
-    suggestions.push(newSuggestion);
-    localStorage.setItem('lumenai_suggestions', JSON.stringify(suggestions));
+    await addDoc(collection(db, 'suggestions'), newSuggestion);
   };
   
-  const getAllSuggestions = (): Suggestion[] => {
-     if (user?.role !== 'admin') {
-      return [];
-    }
-    const storedSuggestions = localStorage.getItem('lumenai_suggestions');
-    const suggestions: Suggestion[] = storedSuggestions ? JSON.parse(storedSuggestions) : [];
-    // Return newest suggestions first
-    return suggestions.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const getAllSuggestions = async (): Promise<Suggestion[]> => {
+     if (user?.role !== 'admin') return [];
+     const suggestionsCol = collection(db, 'suggestions');
+     const q = query(suggestionsCol, orderBy('timestamp', 'desc'));
+     const suggestionSnapshot = await getDocs(q);
+     const suggestionList = suggestionSnapshot.docs.map(doc => {
+         const data = doc.data();
+         return {
+             ...data,
+             id: doc.id,
+             timestamp: (data.timestamp as Timestamp).toDate().toISOString(),
+         } as Suggestion;
+     });
+     return suggestionList;
   };
   
-  const updateSuggestionStatus = (suggestionId: string, status: SuggestionStatus) => {
+  const updateSuggestionStatus = async (suggestionId: string, status: SuggestionStatus) => {
     if (user?.role !== 'admin') return;
-
-    const storedSuggestions = localStorage.getItem('lumenai_suggestions');
-    let suggestions: Suggestion[] = storedSuggestions ? JSON.parse(storedSuggestions) : [];
-    
-    const suggestionIndex = suggestions.findIndex(s => s.id === suggestionId);
-
-    if (suggestionIndex !== -1) {
-      suggestions[suggestionIndex].status = status;
-      localStorage.setItem('lumenai_suggestions', JSON.stringify(suggestions));
-      // This is a way to trigger a re-render in the admin page.
-      // In a real app with a proper state management library, this would be handled more cleanly.
-      setUser({...user}); 
-    }
+    const suggestionDocRef = doc(db, 'suggestions', suggestionId);
+    await updateDoc(suggestionDocRef, { status });
   };
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers, submitSuggestion, getAllSuggestions, updateSuggestionStatus }}>
+    <AuthContext.Provider value={{ user, loading, register, login, signInWithGoogle, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers, submitSuggestion, getAllSuggestions, updateSuggestionStatus }}>
       {children}
     </AuthContext.Provider>
   );

@@ -28,20 +28,27 @@ export default function AdminPage() {
   const [isVerified, setIsVerified] = useState(false);
   const [securityKey, setSecurityKey] = useState('');
   const [error, setError] = useState('');
-  
-  // This state is just to force re-renders when a suggestion status changes.
-  const [_, setForceUpdate] = useState(0);
+  const [forceUpdate, setForceUpdate] = useState(0);
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'admin')) {
       router.replace('/dashboard');
-      return;
     }
-    if (user?.role === 'admin' && getAllUsers && getAllSuggestions) {
-      setAllUsers(getAllUsers());
-      setSuggestions(getAllSuggestions());
+  }, [user, loading, router]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user?.role === 'admin' && getAllUsers && getAllSuggestions) {
+        const users = await getAllUsers();
+        const suggestions = await getAllSuggestions();
+        setAllUsers(users);
+        setSuggestions(suggestions);
+      }
+    };
+    if (isVerified) {
+      fetchData();
     }
-  }, [user, loading, router, getAllUsers, getAllSuggestions]);
+  }, [user, getAllUsers, getAllSuggestions, isVerified, forceUpdate]);
 
   const { stats, toolUsageData, educationLevelData } = useMemo(() => {
     if (allUsers.length === 0) {
@@ -95,11 +102,10 @@ export default function AdminPage() {
     }
   };
   
-  const handleStatusChange = (id: string, status: SuggestionStatus) => {
+  const handleStatusChange = async (id: string, status: SuggestionStatus) => {
     if(updateSuggestionStatus) {
-        updateSuggestionStatus(id, status);
-        // This is a workaround to force a re-render of the suggestions list
-        setSuggestions(getAllSuggestions ? getAllSuggestions() : []);
+        await updateSuggestionStatus(id, status);
+        setForceUpdate(prev => prev + 1); // Trigger re-fetch
     }
   };
 
@@ -110,12 +116,16 @@ export default function AdminPage() {
     'Rechazada': 'bg-red-500/10 text-red-400 border-red-500/20',
   };
 
-  if (loading || !user || user.role !== 'admin') {
+  if (loading || !user) {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
       </div>
     );
+  }
+  
+  if (user.role !== 'admin') {
+      return null;
   }
   
   if (!isVerified) {
@@ -151,7 +161,7 @@ export default function AdminPage() {
     )
   }
   
-  const COLORS = ['#B2A4D4', '#A4C8D4', '#A4D4B2', '#D4C8A4', '#D4B2A4', '#C0A4B2'];
+  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57'];
 
   return (
     <div className="space-y-6">
@@ -292,7 +302,7 @@ export default function AdminPage() {
             </TableHeader>
             <TableBody>
               {allUsers.map((u) => (
-                <TableRow key={u.email}>
+                <TableRow key={u.uid}>
                   <TableCell className="font-medium">{u.name}</TableCell>
                   <TableCell className="text-muted-foreground">{u.email}</TableCell>
                   <TableCell className="text-center">{u.level || 1}</TableCell>

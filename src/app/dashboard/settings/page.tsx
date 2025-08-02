@@ -22,7 +22,7 @@ import { Moon, Sun, ShieldCheck, Send, Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const profileFormSchema = z.object({
   name: z.string().min(1, { message: "El nombre no puede estar vacío." }),
@@ -44,8 +44,8 @@ export default function SettingsPage() {
   const profileForm = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: user?.name || "",
-      educationLevel: user?.educationLevel || "",
+      name: "",
+      educationLevel: "",
     },
   });
 
@@ -55,6 +55,15 @@ export default function SettingsPage() {
       suggestion: "",
     },
   });
+
+  useEffect(() => {
+      if (user) {
+          profileForm.reset({
+              name: user.name,
+              educationLevel: user.educationLevel,
+          });
+      }
+  }, [user, profileForm]);
 
   function onProfileSubmit(values: z.infer<typeof profileFormSchema>) {
     if (updateUser) {
@@ -70,7 +79,7 @@ export default function SettingsPage() {
     if (!submitSuggestion) return;
     setIsSubmittingSuggestion(true);
     try {
-        submitSuggestion(values.suggestion);
+        await submitSuggestion(values.suggestion);
         toast({
             title: "Sugerencia Enviada",
             description: "¡Gracias por tu feedback! Lo revisaremos pronto.",
@@ -87,9 +96,9 @@ export default function SettingsPage() {
     }
   }
 
-  function handleRoleSync() {
+  async function handleRoleSync() {
     if (forceRoleSync) {
-        forceRoleSync();
+        await forceRoleSync();
         toast({
             title: "Rol Sincronizado",
             description: "Tu rol de administrador ha sido verificado y actualizado. Puede que necesites recargar la página.",
@@ -130,7 +139,7 @@ export default function SettingsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nivel educativo</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger><SelectValue placeholder="Selecciona tu nivel" /></SelectTrigger>
                         </FormControl>
@@ -140,6 +149,7 @@ export default function SettingsPage() {
                           <SelectItem value="Universidad (Grado)">Universidad (Grado)</SelectItem>
                           <SelectItem value="Universidad (Postgrado)">Universidad (Postgrado)</SelectItem>
                           <SelectItem value="Técnico/FP">Técnico/FP</SelectItem>
+                          <SelectItem value="No especificado">No especificado</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

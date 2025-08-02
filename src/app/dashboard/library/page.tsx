@@ -36,7 +36,8 @@ export default function LibraryPage() {
   }, [searchTerm, category, level]);
 
   const favoriteResources = useMemo(() => {
-    return resourcesData.filter(resource => user?.favoriteResources?.includes(resource.id));
+    if (!user?.favoriteResources) return [];
+    return resourcesData.filter(resource => user.favoriteResources.includes(resource.id));
   }, [user?.favoriteResources]);
 
   const clearFilters = () => {
@@ -47,6 +48,14 @@ export default function LibraryPage() {
 
   const ResourceCard = ({ resource }: { resource: Resource }) => {
     const isFavorite = user?.favoriteResources?.includes(resource.id);
+
+    const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        if (toggleFavoriteResource) {
+            toggleFavoriteResource(resource.id);
+        }
+    }
+
     return (
       <Card className="flex flex-col overflow-hidden transition-all hover:shadow-lg">
         <CardHeader className="relative p-0">
@@ -79,7 +88,7 @@ export default function LibraryPage() {
           <Button 
             size="sm" 
             variant={isFavorite ? 'default' : 'ghost'}
-            onClick={() => toggleFavoriteResource && toggleFavoriteResource(resource.id)}
+            onClick={handleFavoriteClick}
             className="flex items-center gap-2"
           >
             <Star className={cn("h-4 w-4", isFavorite && "fill-current text-yellow-400")} />
