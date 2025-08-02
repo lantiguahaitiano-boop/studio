@@ -79,12 +79,7 @@ export default function DashboardLayout({
   }, []);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login');
-    }
-  }, [user, loading, router]);
-  
-  useEffect(() => {
+    // This effect now primarily handles hiding the loader if it ever gets stuck.
     if (isMounted) {
       setIsNavigating(false);
     }
@@ -104,6 +99,9 @@ export default function DashboardLayout({
   const handleNavigation = (href: string) => {
     if (pathname !== href) {
         setIsNavigating(true);
+        // We now optimistically assume navigation will be fast
+        // and hide the loader after a very short delay.
+        setTimeout(() => setIsNavigating(false), 500); // 0.5 second loader
     }
   };
 
@@ -196,7 +194,7 @@ export default function DashboardLayout({
                 </div>
               </div>
             )}
-            {!isNavigating && children}
+            {children}
         </main>
       </SidebarInset>
     </SidebarProvider>
