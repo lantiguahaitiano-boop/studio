@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
       
       await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
+      // Let the RegisterForm component handle redirection
       return true;
     } catch (error: any) {
       console.error("Error during registration:", error);
