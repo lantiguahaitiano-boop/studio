@@ -38,7 +38,7 @@ export default function PrivacyPolicyPage() {
             <p>Esta Política de Privacidad describe cómo LumenAI ("nosotros", "nuestro" o "nos") recopila, utiliza y divulga su información personal cuando utiliza nuestro sitio web y nuestros servicios.</p>
 
             <h2>2. Información que Recopilamos</h2>
-            <p>Recopilamos información que usted nos proporciona directamente, como cuando crea una cuenta, se suscribe a un boletín informativo o se comunica con nosotros para recibir asistencia. La información que podemos recopilar incluye:</p>
+            <p>Recopilamos información que usted nos proporciona directamente, como cuando crea una cuenta a través de nuestro formulario de registro o mediante un proveedor de autenticación como Google. La información que podemos recopilar incluye:</p>
             <ul>
                 <li>Nombre</li>
                 <li>Dirección de correo electrónico</li>
@@ -57,10 +57,10 @@ export default function PrivacyPolicyPage() {
             </ul>
 
             <h2>4. Almacenamiento de Datos</h2>
-            <p>Su información de perfil y el historial de uso de las herramientas se almacenan localmente en su navegador utilizando la API de `localStorage`. Esto significa que sus datos permanecen en su dispositivo y no se transmiten a nuestros servidores a menos que sea estrictamente necesario para la función de IA (por ejemplo, enviar un texto a la API de Gemini).</p>
+            <p>Su información de perfil, el historial de uso de las herramientas y otros datos se almacenan de forma segura en la base de datos de Google Firestore. Esto nos permite ofrecer una experiencia persistente y accesible desde cualquier dispositivo.</p>
             
             <h2>5. Seguridad de los Datos</h2>
-            <p>Nos esforzamos por utilizar medios comercialmente aceptables para proteger su información personal. Sin embargo, recuerde que ningún método de transmisión por Internet o método de almacenamiento electrónico es 100% seguro.</p>
+            <p>Nos esforzamos por utilizar medios comercialmente aceptables para proteger su información personal, aprovechando las robustas medidas de seguridad proporcionadas por Google Firebase.</p>
 
             <h2>6. Cambios en esta Política de Privacidad</h2>
             <p>Podemos actualizar nuestra Política de Privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página.</p>

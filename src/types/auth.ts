@@ -39,11 +39,11 @@ export type Suggestion = {
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  register: (credentials: RegisterCredentials) => Promise<boolean>;
-  login: (credentials: LoginCredentials) => Promise<boolean>;
+  register?: (credentials: RegisterCredentials) => Promise<boolean>;
+  login?: (credentials: LoginCredentials) => Promise<boolean>;
   signInWithGoogle?: () => Promise<boolean>;
-  logout: () => void;
-  addXP: (amount: number, toolId?: string) => void;
+  logout?: () => void;
+  addXP?: (amount: number, toolId?: string) => void;
   updateUser?: (newDetails: Partial<User>) => void;
   toggleFavoriteResource?: (resourceId: string) => void;
   forceRoleSync?: () => void;

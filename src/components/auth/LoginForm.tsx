@@ -41,6 +41,7 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!login) return;
     setIsLoading(true);
     const success = await login(values);
     if (!success) {

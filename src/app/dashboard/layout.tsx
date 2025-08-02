@@ -81,7 +81,24 @@ export default function DashboardLayout({
   }, [user, loading, router]);
   
   useEffect(() => {
-    setIsNavigating(false);
+    const handleStart = (url: string) => {
+      if (url !== pathname) {
+        setIsNavigating(true);
+      }
+    };
+    const handleComplete = () => {
+      setIsNavigating(false);
+    };
+
+    // Esto es una simplificación. `next/navigation` no tiene eventos como `next/router`.
+    // Para una solución robusta, se necesitaría un contexto de navegación o una librería externa.
+    // Por ahora, simularemos la carga con un temporizador corto.
+    
+    // Cleanup
+    return () => {
+      setIsNavigating(false);
+    };
+
   }, [pathname]);
 
   if (loading || !user) {
@@ -98,8 +115,17 @@ export default function DashboardLayout({
   const handleNavigation = (href: string) => {
     if (pathname !== href) {
         setIsNavigating(true);
+        // Simulamos la navegación para que el loader se vea
+        setTimeout(() => router.push(href), 50);
+        setTimeout(() => setIsNavigating(false), 1000); // Ocultar loader después de un tiempo
     }
   };
+
+  const handleLogout = () => {
+    if(logout) {
+      logout();
+    }
+  }
 
   return (
     <SidebarProvider>
@@ -122,7 +148,7 @@ export default function DashboardLayout({
                         <SidebarMenuButton
                             as={Link}
                             href={item.href}
-                            onClick={() => handleNavigation(item.href)}
+                            onClick={(e) => {e.preventDefault(); handleNavigation(item.href)}}
                             isActive={pathname === item.href}
                             tooltip={{children: item.label}}
                         >
@@ -140,7 +166,7 @@ export default function DashboardLayout({
                 <SidebarMenuButton
                   as={Link}
                   href="/dashboard/admin"
-                  onClick={() => handleNavigation('/dashboard/admin')}
+                  onClick={(e) => {e.preventDefault(); handleNavigation('/dashboard/admin')}}
                   isActive={pathname === '/dashboard/admin'}
                   tooltip={{children: "Panel de Admin"}}
                   className="text-green-500 hover:bg-green-500/10 hover:text-green-500 data-[active=true]:bg-green-500/10 data-[active=true]:text-green-500"
@@ -154,7 +180,7 @@ export default function DashboardLayout({
                 <SidebarMenuButton
                     as={Link}
                     href="/dashboard/settings"
-                    onClick={() => handleNavigation('/dashboard/settings')}
+                    onClick={(e) => {e.preventDefault(); handleNavigation('/dashboard/settings')}}
                     isActive={pathname === '/dashboard/settings'}
                     tooltip={{children: "Configuración"}}
                     className="text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500"
@@ -165,7 +191,7 @@ export default function DashboardLayout({
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={logout}
+                onClick={handleLogout}
                 tooltip={{ children: 'Cerrar Sesión' }}
                 className="text-red-500 hover:bg-red-500/10 hover:text-red-500 data-[active=true]:bg-red-500/10 data-[active=true]:text-red-500"
               >

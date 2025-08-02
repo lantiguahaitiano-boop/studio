@@ -47,6 +47,7 @@ export function RegisterForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!register) return;
     setIsLoading(true);
     const success = await register(values);
     if (success) {
