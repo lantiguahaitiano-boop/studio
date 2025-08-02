@@ -71,9 +71,9 @@ export function RegisterForm() {
         title: "Error de inicio de sesión",
         description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
       });
+      setIsGoogleLoading(false);
     }
-    // On success, the AuthProvider will redirect to dashboard
-    setIsGoogleLoading(false);
+    // On success, the AuthProvider handles the redirect, so we don't need to set loading to false here.
   }
 
   return (
