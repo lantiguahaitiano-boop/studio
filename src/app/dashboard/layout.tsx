@@ -81,25 +81,9 @@ export default function DashboardLayout({
   }, [user, loading, router]);
   
   useEffect(() => {
-    const handleStart = (url: string) => {
-      if (url !== pathname) {
-        setIsNavigating(true);
-      }
-    };
-    const handleComplete = () => {
-      setIsNavigating(false);
-    };
-
-    // Esto es una simplificación. `next/navigation` no tiene eventos como `next/router`.
-    // Para una solución robusta, se necesitaría un contexto de navegación o una librería externa.
-    // Por ahora, simularemos la carga con un temporizador corto.
-    
-    // Cleanup
-    return () => {
-      setIsNavigating(false);
-    };
-
+    setIsNavigating(false);
   }, [pathname]);
+
 
   if (loading || !user) {
     return (
@@ -114,10 +98,8 @@ export default function DashboardLayout({
   
   const handleNavigation = (href: string) => {
     if (pathname !== href) {
-        setIsNavigating(true);
-        // Simulamos la navegación para que el loader se vea
-        setTimeout(() => router.push(href), 50);
-        setTimeout(() => setIsNavigating(false), 1000); // Ocultar loader después de un tiempo
+      setIsNavigating(true);
+      router.push(href);
     }
   };
 
@@ -148,7 +130,10 @@ export default function DashboardLayout({
                         <SidebarMenuButton
                             as={Link}
                             href={item.href}
-                            onClick={(e) => {e.preventDefault(); handleNavigation(item.href)}}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleNavigation(item.href);
+                            }}
                             isActive={pathname === item.href}
                             tooltip={{children: item.label}}
                         >
