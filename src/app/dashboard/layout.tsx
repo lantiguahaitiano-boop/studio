@@ -72,20 +72,19 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [isNavigating, setIsNavigating] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    // This effect now primarily handles hiding the loader if it ever gets stuck.
-    if (isMounted) {
-      setIsNavigating(false);
+    if (loading) return;
+    if (!user) {
+      router.replace('/login');
     }
-  }, [pathname, isMounted]);
+  }, [user, loading, router]);
+  
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname]);
 
-  if (loading || !user || !isMounted) {
+  if (loading || !user) {
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-background">
             <div className="flex flex-col items-center gap-4">
@@ -99,9 +98,6 @@ export default function DashboardLayout({
   const handleNavigation = (href: string) => {
     if (pathname !== href) {
         setIsNavigating(true);
-        // We now optimistically assume navigation will be fast
-        // and hide the loader after a very short delay.
-        setTimeout(() => setIsNavigating(false), 500); // 0.5 second loader
     }
   };
 
