@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useAuth } from '@/hooks/use-auth';
@@ -150,7 +151,7 @@ export default function AdminPage() {
     )
   }
   
-  const COLORS = ['#673AB7', '#2196F3', '#4CAF50', '#FFC107', '#FF5722', '#795548'];
+  const COLORS = ['#B2A4D4', '#A4C8D4', '#A4D4B2', '#D4C8A4', '#D4B2A4', '#C0A4B2'];
 
   return (
     <div className="space-y-6">
