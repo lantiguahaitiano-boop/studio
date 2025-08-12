@@ -9,7 +9,9 @@ import {
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
-  User as FirebaseUser
+  User as FirebaseUser,
+  sendEmailVerification,
+  UserCredential,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
@@ -61,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const register = async ({ name, email, password, educationLevel }: RegisterCredentials): Promise<boolean> => {
     if (!password) return false;
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential: UserCredential = await createUserWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
       
       const newUser: Omit<User, 'uid'> = {
@@ -76,6 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
       
       await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
+      await sendEmailVerification(firebaseUser);
       return true;
     } catch (error: any) {
       console.error("Error during registration:", error);

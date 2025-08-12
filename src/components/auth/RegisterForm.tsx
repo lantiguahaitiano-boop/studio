@@ -53,8 +53,8 @@ export function RegisterForm() {
         const success = await register(values);
         if (success) {
           toast({
-            title: "Registro completado",
-            description: "Ahora puedes iniciar sesión con tu nueva cuenta.",
+            title: "¡Revisa tu correo!",
+            description: "Te hemos enviado un enlace para verificar tu cuenta.",
           });
           router.push("/login");
         }
