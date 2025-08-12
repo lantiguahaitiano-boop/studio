@@ -37,6 +37,7 @@ const prompt = ai.definePrompt({
   input: { schema: PlanProjectInputSchema },
   output: { schema: PlanProjectOutputSchema },
   prompt: `You are an expert academic advisor. Your task is to generate a detailed project plan for a given research topic. The plan should include a title, introduction, structured sections with content points, a conclusion, and suggested bibliographic resources.
+  IMPORTANT: Your response must be in Spanish.
 
   Topic:
   {{{topic}}}

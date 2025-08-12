@@ -46,6 +46,7 @@ const prompt = ai.definePrompt({
   input: { schema: GenerateFlowchartInputSchema },
   output: { schema: GenerateFlowchartOutputSchema },
   prompt: `You are an expert in creating structured diagrams. Your task is to convert a user's description of a process into a flowchart.
+  IMPORTANT: Your response must be in Spanish.
 
   Analyze the process and break it down into logical steps. Create nodes for each step and define the connections (edges) between them.
   

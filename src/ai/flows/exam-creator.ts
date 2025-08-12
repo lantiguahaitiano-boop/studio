@@ -35,6 +35,7 @@ const prompt = ai.definePrompt({
   input: { schema: GenerateExamInputSchema },
   output: { schema: GenerateExamOutputSchema },
   prompt: `You are an AI assistant for creating exams. Your task is to generate a multiple-choice exam based on the provided topic. Create {{numQuestions}} questions. Each question should have 4 options, and one of them must be the correct answer.
+  IMPORTANT: Your response must be in Spanish.
 
   Topic:
   {{{topic}}}

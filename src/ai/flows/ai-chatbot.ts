@@ -30,6 +30,7 @@ const prompt = ai.definePrompt({
   input: {schema: AskQuestionInputSchema},
   output: {schema: AskQuestionOutputSchema},
   prompt: `You are an AI chatbot designed to answer academic questions.
+  IMPORTANT: Your response must be in Spanish.
 
   Question: {{{question}}}
   Answer: `,

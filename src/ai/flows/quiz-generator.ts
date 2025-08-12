@@ -34,6 +34,7 @@ const prompt = ai.definePrompt({
   input: { schema: GenerateQuizInputSchema },
   output: { schema: GenerateQuizOutputSchema },
   prompt: `You are an AI assistant for students. Your task is to generate a multiple-choice quiz based on the provided text. Create 5 questions. Each question should have 4 options, and one of them must be the correct answer.
+  IMPORTANT: Your response must be in Spanish.
 
   Source Text:
   {{{text}}}

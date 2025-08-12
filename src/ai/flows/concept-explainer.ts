@@ -30,6 +30,7 @@ const prompt = ai.definePrompt({
   input: { schema: ExplainConceptInputSchema },
   output: { schema: ExplainConceptOutputSchema },
   prompt: `You are an expert in simplifying complex topics. Your task is to explain the following concept in a clear, simple, and easy-to-understand way.
+  IMPORTANT: Your response must be in Spanish.
 
   Concept:
   {{{concept}}}

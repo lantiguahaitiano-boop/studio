@@ -34,6 +34,7 @@ const prompt = ai.definePrompt({
   input: {schema: AiTaskAssistantInputSchema},
   output: {schema: AiTaskAssistantOutputSchema},
   prompt: `You are an AI assistant specialized in providing step-by-step solutions to academic problems.
+  IMPORTANT: Your response must be in Spanish.
 
   Problem: {{{problemDescription}}}
 

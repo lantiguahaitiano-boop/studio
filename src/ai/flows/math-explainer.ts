@@ -31,6 +31,7 @@ const prompt = ai.definePrompt({
   input: { schema: ExplainMathInputSchema },
   output: { schema: ExplainMathOutputSchema },
   prompt: `You are an expert math teacher. Your task is to explain the following mathematical operation and its result in a clear, step-by-step manner.
+  IMPORTANT: Your response must be in Spanish.
 
   Operation: {{{operation}}}
   Result: {{{result}}}

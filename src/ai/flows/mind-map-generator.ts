@@ -44,6 +44,7 @@ const prompt = ai.definePrompt({
   input: { schema: GenerateMindMapInputSchema },
   output: { schema: GenerateMindMapOutputSchema },
   prompt: `You are an expert in structuring information. Your task is to generate a hierarchical mind map structure for a given topic. 
+  IMPORTANT: Your response must be in Spanish.
   
   The structure should start with a single root node representing the main topic. This root node should have several child nodes for the main ideas or sub-topics. Each of these can have their own children, creating a tree-like structure. Keep the hierarchy logical and the labels concise. Aim for 3-4 levels of depth.
 

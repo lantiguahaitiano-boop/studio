@@ -30,6 +30,7 @@ const prompt = ai.definePrompt({
   input: { schema: SummarizeTextInputSchema },
   output: { schema: SummarizeTextOutputSchema },
   prompt: `You are an expert in text summarization. Your task is to provide a concise and clear summary of the following text. The summary should capture the main points and key information.
+  IMPORTANT: Your response must be in Spanish.
 
   Text to summarize:
   {{{text}}}

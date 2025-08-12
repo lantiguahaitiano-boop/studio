@@ -1,4 +1,3 @@
-// src/ai/flows/presentation-creator.ts
 'use server';
 /**
  * @fileOverview A presentation creator AI agent.
@@ -38,6 +37,7 @@ const prompt = ai.definePrompt({
   input: {schema: CreatePresentationInputSchema},
   output: {schema: CreatePresentationOutputSchema},
   prompt: `You are an expert presentation creator. You will generate a structured plan for a presentation on a given topic. The user will specify a number of slides, which you should interpret as the number of main sections or key ideas to develop.
+  IMPORTANT: Your response must be in Spanish.
 
 The plan should include a main title, a brief introduction, several sections with a title and key points, and a conclusion.
 
