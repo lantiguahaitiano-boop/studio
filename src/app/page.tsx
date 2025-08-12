@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { LumenAILogo } from '@/components/icons/LumenAILogo';
+import { LearnProLogo } from '@/components/icons/LearnProLogo';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -23,9 +23,9 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <Link href="#" className="mr-6 flex items-center space-x-2">
-            <LumenAILogo className="h-8 w-8" />
+            <LearnProLogo className="h-8 w-8" />
             <div className="flex items-center gap-2">
-                <span className="font-bold sm:inline-block font-headline text-2xl">LumenAI</span>
+                <span className="font-bold sm:inline-block font-headline text-2xl">LearnPro</span>
                 <Badge variant="secondary">BETA</Badge>
             </div>
           </Link>
@@ -53,7 +53,7 @@ export default function LandingPage() {
               Potencia tu aprendizaje con <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Inteligencia Artificial</span>
             </h1>
             <p className="max-w-2xl text-lg text-muted-foreground">
-              LumenAI es tu asistente educativo todo en uno. Desde resolver problemas complejos hasta preparar exposiciones, tenemos las herramientas que necesitas para brillar.
+              LearnPro es tu asistente educativo todo en uno. Desde resolver problemas complejos hasta preparar exposiciones, tenemos las herramientas que necesitas para brillar.
             </p>
           </div>
           <div className="flex justify-center gap-4">
@@ -92,9 +92,9 @@ export default function LandingPage() {
         <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
            <div className="flex flex-col items-center gap-2 md:flex-row">
                 <div className="flex items-center gap-2">
-                    <LumenAILogo className="h-6 w-6" />
+                    <LearnProLogo className="h-6 w-6" />
                     <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} LumenAI. Todos los derechos reservados.
+                        © {new Date().getFullYear()} LearnPro. Todos los derechos reservados.
                     </p>
                 </div>
                 <p className="text-sm text-muted-foreground">

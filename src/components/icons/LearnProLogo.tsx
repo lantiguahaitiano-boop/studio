@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function LumenAILogo(props: React.SVGProps<SVGSVGElement>) {
+export function LearnProLogo(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

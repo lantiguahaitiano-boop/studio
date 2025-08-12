@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/context/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'LumenAI',
+  title: 'LearnPro',
   description: 'Tu asistente educativo inteligente.',
 };
 

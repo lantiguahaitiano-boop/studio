@@ -49,29 +49,34 @@ export function RegisterForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!register) return;
     setIsLoading(true);
-    const success = await register(values);
-    if (success) {
-      toast({
-        title: "Registro completado",
-        description: "Ahora puedes iniciar sesión con tu nueva cuenta.",
-      });
-      router.push("/login");
+    try {
+        const success = await register(values);
+        if (success) {
+          toast({
+            title: "Registro completado",
+            description: "Ahora puedes iniciar sesión con tu nueva cuenta.",
+          });
+          router.push("/login");
+        }
+    } finally {
+        setIsLoading(false);
     }
-    // Error toast is handled inside the register function
-    setIsLoading(false);
   }
 
   async function handleGoogleSignIn() {
     if (!signInWithGoogle) return;
     setIsGoogleLoading(true);
-    const success = await signInWithGoogle();
-     if (!success) {
-      toast({
-        variant: "destructive",
-        title: "Error de inicio de sesión",
-        description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
-      });
-      setIsGoogleLoading(false);
+    try {
+        const success = await signInWithGoogle();
+         if (!success) {
+          toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+          });
+        }
+    } finally {
+        setIsGoogleLoading(false);
     }
     // On success, the AuthProvider handles the redirect, so we don't need to set loading to false here.
   }
@@ -80,7 +85,7 @@ export function RegisterForm() {
     <Card>
       <CardHeader>
         <CardTitle className="font-headline text-2xl">Crear Cuenta</CardTitle>
-        <CardDescription>Únete a LumenAI y potencia tu aprendizaje.</CardDescription>
+        <CardDescription>Únete a LearnPro y potencia tu aprendizaje.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>

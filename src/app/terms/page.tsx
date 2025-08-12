@@ -1,5 +1,5 @@
 
-import { LumenAILogo } from '@/components/icons/LumenAILogo';
+import { LearnProLogo } from '@/components/icons/LearnProLogo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +10,9 @@ export default function TermsOfServicePage() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <LumenAILogo className="h-8 w-8" />
+            <LearnProLogo className="h-8 w-8" />
              <div className="flex items-center gap-2">
-                <span className="font-bold sm:inline-block font-headline text-2xl">LumenAI</span>
+                <span className="font-bold sm:inline-block font-headline text-2xl">LearnPro</span>
                 <Badge variant="secondary">BETA</Badge>
             </div>
           </Link>
@@ -35,10 +35,10 @@ export default function TermsOfServicePage() {
             <p className="text-muted-foreground">Última actualización: {new Date().toLocaleDateString()}</p>
 
             <h2>1. Aceptación de los Términos</h2>
-            <p>Al acceder y utilizar LumenAI (el "Servicio"), usted acepta estar sujeto a estos Términos de Servicio ("Términos"). Si no está de acuerdo con alguna parte de los términos, no podrá acceder al Servicio.</p>
+            <p>Al acceder y utilizar LearnPro (el "Servicio"), usted acepta estar sujeto a estos Términos de Servicio ("Términos"). Si no está de acuerdo con alguna parte de los términos, no podrá acceder al Servicio.</p>
 
             <h2>2. Descripción del Servicio</h2>
-            <p>LumenAI es una plataforma de asistencia educativa que utiliza inteligencia artificial para proporcionar diversas herramientas a los estudiantes. Las características incluyen, entre otras, asistente de tareas, resumen de textos, explicador de conceptos y más.</p>
+            <p>LearnPro es una plataforma de asistencia educativa que utiliza inteligencia artificial para proporcionar diversas herramientas a los estudiantes. Las características incluyen, entre otras, asistente de tareas, resumen de textos, explicador de conceptos y más.</p>
 
             <h2>3. Cuentas de Usuario</h2>
             <p>Para acceder a la mayoría de las funciones del Servicio, debe registrarse para obtener una cuenta. Usted es responsable de salvaguardar la contraseña que utiliza para acceder al Servicio y de cualquier actividad o acción bajo su contraseña. Usted se compromete a no revelar su contraseña a ningún tercero.</p>
@@ -64,9 +64,9 @@ export default function TermsOfServicePage() {
         <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
            <div className="flex flex-col items-center gap-2 md:flex-row">
                 <div className="flex items-center gap-2">
-                    <LumenAILogo className="h-6 w-6" />
+                    <LearnProLogo className="h-6 w-6" />
                     <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} LumenAI. Todos los derechos reservados.
+                        © {new Date().getFullYear()} LearnPro. Todos los derechos reservados.
                     </p>
                 </div>
            </div>

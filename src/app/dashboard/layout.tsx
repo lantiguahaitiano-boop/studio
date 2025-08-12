@@ -40,7 +40,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
-import { LumenAILogo } from '@/components/icons/LumenAILogo';
+import { LearnProLogo } from '@/components/icons/LearnProLogo';
 import { Badge } from '@/components/ui/badge';
 
 const menuItems = [
@@ -101,10 +101,10 @@ export default function DashboardLayout({
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <LumenAILogo className="size-8" />
+            <LearnProLogo className="size-8" />
             <div className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
                 <h1 className="font-headline text-2xl font-bold text-primary">
-                LumenAI
+                LearnPro
                 </h1>
                 <Badge variant="secondary" className="text-xs">BETA</Badge>
             </div>

@@ -43,28 +43,34 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!login) return;
     setIsLoading(true);
-    const success = await login(values);
-    if (!success) {
-      toast({
-        variant: "destructive",
-        title: "Error de inicio de sesión",
-        description: "El correo o la contraseña son incorrectos.",
-      });
+    try {
+        const success = await login(values);
+        if (!success) {
+          toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "El correo o la contraseña son incorrectos.",
+          });
+        }
+    } finally {
+        setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   async function handleGoogleSignIn() {
     if (!signInWithGoogle) return;
     setIsGoogleLoading(true);
-    const success = await signInWithGoogle();
-     if (!success) {
-      toast({
-        variant: "destructive",
-        title: "Error de inicio de sesión",
-        description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
-      });
-      setIsGoogleLoading(false);
+    try {
+        const success = await signInWithGoogle();
+         if (!success) {
+          toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+          });
+        }
+    } finally {
+        setIsGoogleLoading(false);
     }
     // On success, the AuthProvider handles the redirect, so we don't need to set loading to false here.
   }
@@ -73,7 +79,7 @@ export function LoginForm() {
     <Card>
       <CardHeader>
         <CardTitle className="font-headline text-2xl">Iniciar Sesión</CardTitle>
-        <CardDescription>Accede a tu panel de control de LumenAI.</CardDescription>
+        <CardDescription>Accede a tu panel de control de LearnPro.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
