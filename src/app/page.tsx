@@ -117,7 +117,7 @@ export default function LandingPage() {
                     </p>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                    Hecho por Lantigua Productions.
+                    Hecho por Lantigua Company.
                 </p>
            </div>
            <div className="flex items-center gap-4 text-sm text-muted-foreground">
