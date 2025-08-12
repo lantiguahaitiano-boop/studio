@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Sparkles, Lightbulb } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   concept: z.string().min(5, {
@@ -52,7 +53,7 @@ export default function ConceptExplainerPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Explicador de Conceptos</h1>
         <p className="text-muted-foreground">¿Un tema te parece difícil? La IA te lo explica de forma sencilla.</p>
@@ -119,17 +120,19 @@ export default function ConceptExplainerPage() {
       )}
 
       {explanation && !isLoading && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Explicación Sencilla</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
-                {explanation}
-            </div>
-          </CardContent>
-        </Card>
+        <AnimatedDiv>
+            <Card>
+            <CardHeader>
+                <CardTitle>Explicación Sencilla</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
+                    {explanation}
+                </div>
+            </CardContent>
+            </Card>
+        </AnimatedDiv>
       )}
-    </div>
+    </AnimatedDiv>
   );
 }

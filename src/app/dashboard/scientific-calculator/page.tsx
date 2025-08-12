@@ -9,6 +9,7 @@ import { explainMath } from '@/ai/flows/math-explainer';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 export default function ScientificCalculatorPage() {
   const [expression, setExpression] = useState('');
@@ -84,7 +85,7 @@ export default function ScientificCalculatorPage() {
   };
   
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Calculadora Científica Explicada</h1>
         <p className="text-muted-foreground">Resuelve operaciones y entiende los resultados paso a paso.</p>
@@ -152,9 +153,11 @@ export default function ScientificCalculatorPage() {
                   </div>
               )}
               {explanation && !isExplaining && (
+                  <AnimatedDiv>
                   <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
                       {explanation}
                   </div>
+                  </AnimatedDiv>
               )}
               {!explanation && !isExplaining && (
                 <div className="flex h-[300px] items-center justify-center rounded-md border-2 border-dashed bg-muted/50">
@@ -164,6 +167,6 @@ export default function ScientificCalculatorPage() {
             </CardContent>
         </Card>
       </div>
-    </div>
+    </AnimatedDiv>
   );
 }

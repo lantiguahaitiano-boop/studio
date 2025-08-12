@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { AuthProvider } from '@/context/AuthProvider';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/context/ThemeProvider';
+import { AnimatePresence } from 'framer-motion';
 
 export const metadata: Metadata = {
   title: 'LearnPro',

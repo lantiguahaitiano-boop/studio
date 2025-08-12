@@ -14,6 +14,7 @@ import { Send, User, Bot, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   question: z.string().min(1),
@@ -74,7 +75,7 @@ export default function ChatbotPage() {
   }
   
   return (
-    <div className="flex h-[calc(100vh-theme(spacing.24))] flex-col">
+    <AnimatedDiv className="flex h-[calc(100vh-theme(spacing.24))] flex-col">
       <div className="mb-4">
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Chat Privado con IA</h1>
         <p className="text-muted-foreground">Tu tutor personal disponible 24/7. Haz cualquier pregunta académica.</p>
@@ -84,8 +85,11 @@ export default function ChatbotPage() {
         <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
           <div className="space-y-6">
             {messages.map((message, index) => (
-              <div
+              <AnimatedDiv
                 key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
                 className={cn(
                   'flex items-start gap-3',
                   message.sender === 'user' ? 'justify-end' : 'justify-start'
@@ -100,7 +104,7 @@ export default function ChatbotPage() {
                 )}
                 <div
                   className={cn(
-                    'max-w-md rounded-lg p-3 text-sm',
+                    'max-w-md rounded-lg p-3 text-sm shadow-md',
                     message.sender === 'user'
                       ? 'rounded-br-none bg-accent text-accent-foreground'
                       : 'rounded-bl-none bg-muted'
@@ -120,7 +124,7 @@ export default function ChatbotPage() {
                     <AvatarFallback><User className="h-5 w-5" /></AvatarFallback>
                   </Avatar>
                 )}
-              </div>
+              </AnimatedDiv>
             ))}
           </div>
         </ScrollArea>
@@ -152,6 +156,6 @@ export default function ChatbotPage() {
           </Form>
         </div>
       </div>
-    </div>
+    </AnimatedDiv>
   );
 }

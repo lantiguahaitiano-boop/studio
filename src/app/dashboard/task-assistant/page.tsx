@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   problemDescription: z.string().min(10, {
@@ -52,7 +53,7 @@ export default function TaskAssistantPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Asistente de Tareas IA</h1>
         <p className="text-muted-foreground">Describe cualquier problema académico y obtén una solución paso a paso.</p>
@@ -120,17 +121,19 @@ export default function TaskAssistantPage() {
       )}
 
       {solution && !isLoading && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Solución Paso a Paso</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
-                {solution}
-            </div>
-          </CardContent>
-        </Card>
+        <AnimatedDiv>
+            <Card>
+            <CardHeader>
+                <CardTitle>Solución Paso a Paso</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
+                    {solution}
+                </div>
+            </CardContent>
+            </Card>
+        </AnimatedDiv>
       )}
-    </div>
+    </AnimatedDiv>
   );
 }

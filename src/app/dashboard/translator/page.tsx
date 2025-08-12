@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Loader2, ArrowRightLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   text: z.string().min(5, { message: 'El texto debe tener al menos 5 caracteres.' }),
@@ -68,7 +69,7 @@ export default function TranslatorPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Traductor Educativo</h1>
         <p className="text-muted-foreground">Traduce textos académicos con contexto para mayor precisión.</p>
@@ -126,12 +127,21 @@ export default function TranslatorPage() {
                 />
                 <FormItem>
                   <FormLabel>Traducción</FormLabel>
-                  <Textarea
-                    readOnly
-                    placeholder={isLoading ? "Traduciendo..." : "La traducción aparecerá aquí..."}
-                    className="min-h-[200px] bg-muted/50"
-                    value={translatedText}
-                  />
+                   <div className="min-h-[200px] rounded-md border bg-muted/50 p-3 text-sm">
+                        {isLoading ? (
+                            <div className="flex h-full items-center justify-center">
+                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                            </div>
+                        ) : translatedText ? (
+                            <AnimatedDiv>
+                                <p className="whitespace-pre-wrap">{translatedText}</p>
+                            </AnimatedDiv>
+                        ) : (
+                             <div className="flex h-full items-center justify-center">
+                                <p className="text-muted-foreground">La traducción aparecerá aquí...</p>
+                            </div>
+                        )}
+                    </div>
                 </FormItem>
               </div>
 
@@ -146,6 +156,6 @@ export default function TranslatorPage() {
           </Form>
         </CardContent>
       </Card>
-    </div>
+    </AnimatedDiv>
   );
 }

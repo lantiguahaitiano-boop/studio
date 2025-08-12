@@ -13,6 +13,7 @@ import { Loader2, Sparkles, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   text: z.string().min(100, {
@@ -59,7 +60,7 @@ export default function QuizGeneratorPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Generador de Cuestionarios</h1>
         <p className="text-muted-foreground">Pega un texto y crearemos un cuestionario para ayudarte a estudiar.</p>
@@ -116,6 +117,7 @@ export default function QuizGeneratorPage() {
       )}
 
       {quiz && !isLoading && (
+        <AnimatedDiv>
         <Card>
           <CardHeader>
             <CardTitle>Cuestionario Generado</CardTitle>
@@ -145,7 +147,8 @@ export default function QuizGeneratorPage() {
             </Accordion>
           </CardContent>
         </Card>
+        </AnimatedDiv>
       )}
-    </div>
+    </AnimatedDiv>
   );
 }

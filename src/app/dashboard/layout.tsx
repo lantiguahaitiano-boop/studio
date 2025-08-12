@@ -42,6 +42,7 @@ import {
 import { UserNav } from '@/components/layout/UserNav';
 import { LearnProLogo } from '@/components/icons/LearnProLogo';
 import { Badge } from '@/components/ui/badge';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const menuItems = [
     { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck },
@@ -160,7 +161,17 @@ export default function DashboardLayout({
             <UserNav />
         </header>
         <main className="relative flex-1 overflow-auto p-4 md:p-6">
-            {children}
+            <AnimatePresence mode="wait">
+                 <motion.div
+                    key={pathname}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.2 }}
+                >
+                    {children}
+                </motion.div>
+            </AnimatePresence>
         </main>
       </SidebarInset>
     </SidebarProvider>

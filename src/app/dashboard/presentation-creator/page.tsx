@@ -14,6 +14,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: 'El tema debe tener al menos 3 caracteres.' }),
@@ -56,7 +57,7 @@ export default function PresentationCreatorPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Creador de Exposiciones</h1>
         <p className="text-muted-foreground">Genera contenido para tus diapositivas sobre cualquier tema.</p>
@@ -128,6 +129,7 @@ export default function PresentationCreatorPage() {
       )}
 
       {slides && !isLoading && (
+        <AnimatedDiv>
         <Card>
           <CardHeader>
             <CardTitle>Diapositivas Generadas</CardTitle>
@@ -155,7 +157,8 @@ export default function PresentationCreatorPage() {
             </Carousel>
           </CardContent>
         </Card>
+        </AnimatedDiv>
       )}
-    </div>
+    </AnimatedDiv>
   );
 }

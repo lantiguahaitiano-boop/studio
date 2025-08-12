@@ -13,6 +13,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Loader2, Sparkles, BookCheck, ClipboardList } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   topic: z.string().min(10, {
@@ -53,7 +54,7 @@ export default function ProjectPlannerPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Planificador de Proyectos</h1>
         <p className="text-muted-foreground">Estructura y planifica tus trabajos de investigación con ayuda de la IA.</p>
@@ -115,6 +116,7 @@ export default function ProjectPlannerPage() {
       )}
 
       {plan && !isLoading && (
+        <AnimatedDiv>
         <Card>
           <CardHeader>
             <CardTitle>{plan.title}</CardTitle>
@@ -147,7 +149,8 @@ export default function ProjectPlannerPage() {
             </Accordion>
           </CardContent>
         </Card>
+        </AnimatedDiv>
       )}
-    </div>
+    </AnimatedDiv>
   );
 }

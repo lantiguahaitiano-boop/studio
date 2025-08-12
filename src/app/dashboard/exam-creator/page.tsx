@@ -14,6 +14,7 @@ import { Loader2, Sparkles, HelpCircle } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
+import { AnimatedDiv } from '@/components/ui/animated-div';
 
 const formSchema = z.object({
   topic: z.string().min(5, {
@@ -62,7 +63,7 @@ export default function ExamCreatorPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Creador de Exámenes</h1>
         <p className="text-muted-foreground">Crea exámenes personalizados sobre cualquier tema.</p>
@@ -137,6 +138,7 @@ export default function ExamCreatorPage() {
       )}
 
       {exam && !isLoading && (
+        <AnimatedDiv>
         <Card>
           <CardHeader>
             <CardTitle>Examen Generado</CardTitle>
@@ -166,7 +168,8 @@ export default function ExamCreatorPage() {
             </Accordion>
           </CardContent>
         </Card>
+        </AnimatedDiv>
       )}
-    </div>
+    </AnimatedDiv>
   );
 }
