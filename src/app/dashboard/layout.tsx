@@ -59,7 +59,7 @@ const menuItems = [
     { href: '/dashboard/project-planner', label: 'Planificador de Proyectos', icon: ListTodo },
     { href: '/dashboard/library', label: 'Biblioteca de Recursos', icon: Library },
     { href: '/dashboard/scientific-calculator', label: 'Calculadora Científica Explicada', icon: Calculator },
-    { href: '/dashboard/mind-map-tool', label: 'Herramienta de Mapas Mentales', icon: BrainCircuit },
+    { href: '/dashboard/mind-map-generator', label: 'Herramienta de Mapas Mentales', icon: BrainCircuit },
     { href: '/dashboard/virtual-lab', label: 'Laboratorio Virtual', icon: FlaskConical },
     { href: '/dashboard/progress-achievements', label: 'Progreso y Logros', icon: TrendingUp },
 ];

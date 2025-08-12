@@ -20,7 +20,7 @@ const tools = [
     { href: '/dashboard/project-planner', title: 'Planificador de Proyectos', description: 'Estructura trabajos de investigación.', icon: ListTodo },
     { href: '/dashboard/library', title: 'Biblioteca de Recursos', description: 'Accede a libros, artículos y videos.', icon: Library },
     { href: '/dashboard/scientific-calculator', title: 'Calculadora Científica', description: 'Resuelve y explica operaciones.', icon: Calculator },
-    { href: '/dashboard/mind-map-tool', title: 'Mapas Mentales', description: 'Organiza ideas visualmente.', icon: BrainCircuit },
+    { href: '/dashboard/mind-map-generator', title: 'Mapas Mentales', description: 'Organiza ideas visualmente.', icon: BrainCircuit },
     { href: '/dashboard/virtual-lab', title: 'Laboratorio Virtual', description: 'Experimenta con simulaciones.', icon: FlaskConical },
     { href: '/dashboard/progress-achievements', title: 'Progreso y Logros', description: 'Muestra tu avance y logros.', icon: TrendingUp },
     { href: '/dashboard/settings', title: 'Configuración', description: 'Personaliza tu experiencia.', icon: Settings },
