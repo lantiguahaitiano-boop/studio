@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser({ uid: firebaseUser.uid, ...userDoc.data() } as User);
         } else {
             // This case handles users created via Google Sign-In for the first time
+            // It might be triggered if the user closes the tab right after signing up
             const newUser: User = {
                 uid: firebaseUser.uid,
                 email: firebaseUser.email!,
@@ -110,7 +111,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userDoc = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
-        const newUser: Omit<User, 'uid'> = {
+        const newUser: User = {
+            uid: firebaseUser.uid,
             email: firebaseUser.email!,
             name: firebaseUser.displayName!,
             educationLevel: 'No especificado',
@@ -121,6 +123,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             favoriteResources: [],
         };
         await setDoc(userDocRef, newUser);
+        // Set user state immediately for new Google users to prevent race conditions
+        setUser(newUser);
       }
       
       router.push('/dashboard');
