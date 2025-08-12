@@ -13,3 +13,4 @@ import '@/ai/flows/exam-creator.ts';
 import '@/ai/flows/project-planner.ts';
 import '@/ai/flows/math-explainer.ts';
 import '@/ai/flows/mind-map-generator.ts';
+import '@/ai/flows/flowchart-generator.ts';

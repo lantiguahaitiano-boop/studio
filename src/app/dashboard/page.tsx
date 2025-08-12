@@ -2,7 +2,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion, Settings, Library, BrainCircuit, FlaskConical } from "lucide-react";
+import { BookOpenCheck, Presentation, BotMessageSquare, Languages, Newspaper, Lightbulb, PenSquare, HelpCircle, ListTodo, Calculator, TrendingUp, CalendarDays, MessageCircleQuestion, Settings, Library, BrainCircuit, FlaskConical, GitFork } from "lucide-react";
 import { AnimatedDiv } from "@/components/ui/animated-div";
 
 const tools = [
@@ -21,6 +21,7 @@ const tools = [
     { href: '/dashboard/library', title: 'Biblioteca de Recursos', description: 'Accede a libros, artículos y videos.', icon: Library },
     { href: '/dashboard/scientific-calculator', title: 'Calculadora Científica', description: 'Resuelve y explica operaciones.', icon: Calculator },
     { href: '/dashboard/mind-map-generator', title: 'Mapas Mentales', description: 'Organiza ideas visualmente.', icon: BrainCircuit },
+    { href: '/dashboard/flowchart-creator', title: 'Diagramas de Flujo', description: 'Visualiza procesos y algoritmos.', icon: GitFork },
     { href: '/dashboard/virtual-lab', title: 'Laboratorio Virtual', description: 'Experimenta con simulaciones.', icon: FlaskConical },
     { href: '/dashboard/progress-achievements', title: 'Progreso y Logros', description: 'Muestra tu avance y logros.', icon: TrendingUp },
     { href: '/dashboard/settings', title: 'Configuración', description: 'Personaliza tu experiencia.', icon: Settings },

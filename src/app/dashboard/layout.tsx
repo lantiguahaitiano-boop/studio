@@ -38,6 +38,7 @@ import {
   BrainCircuit,
   FlaskConical,
   Shield,
+  GitFork,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { SkillicoLogo } from '@/components/icons/SkillicoLogo';
@@ -60,6 +61,7 @@ const menuItems = [
     { href: '/dashboard/library', label: 'Biblioteca de Recursos', icon: Library },
     { href: '/dashboard/scientific-calculator', label: 'Calculadora Científica Explicada', icon: Calculator },
     { href: '/dashboard/mind-map-generator', label: 'Herramienta de Mapas Mentales', icon: BrainCircuit },
+    { href: '/dashboard/flowchart-creator', label: 'Creador de Diagramas de Flujo', icon: GitFork },
     { href: '/dashboard/virtual-lab', label: 'Laboratorio Virtual', icon: FlaskConical },
     { href: '/dashboard/progress-achievements', label: 'Progreso y Logros', icon: TrendingUp },
 ];
