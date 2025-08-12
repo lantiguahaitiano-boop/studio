@@ -71,7 +71,6 @@ export default function DashboardLayout({
   const { user, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -80,10 +79,11 @@ export default function DashboardLayout({
     }
   }, [user, loading, router]);
   
-  useEffect(() => {
-    setIsNavigating(false);
-  }, [pathname]);
-
+  const handleLogout = () => {
+    if(logout) {
+      logout();
+    }
+  }
 
   if (loading || !user) {
     return (
@@ -96,19 +96,6 @@ export default function DashboardLayout({
     );
   }
   
-  const handleNavigation = (href: string) => {
-    if (pathname !== href) {
-      setIsNavigating(true);
-      router.push(href);
-    }
-  };
-
-  const handleLogout = () => {
-    if(logout) {
-      logout();
-    }
-  }
-
   return (
     <SidebarProvider>
       <Sidebar>
@@ -130,10 +117,6 @@ export default function DashboardLayout({
                         <SidebarMenuButton
                             as={Link}
                             href={item.href}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleNavigation(item.href);
-                            }}
                             isActive={pathname === item.href}
                             tooltip={{children: item.label}}
                         >
@@ -146,26 +129,10 @@ export default function DashboardLayout({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            {user.role === 'admin' && (
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  as={Link}
-                  href="/dashboard/admin"
-                  onClick={(e) => {e.preventDefault(); handleNavigation('/dashboard/admin')}}
-                  isActive={pathname === '/dashboard/admin'}
-                  tooltip={{children: "Panel de Admin"}}
-                  className="text-green-500 hover:bg-green-500/10 hover:text-green-500 data-[active=true]:bg-green-500/10 data-[active=true]:text-green-500"
-                >
-                  <Shield />
-                  <span>Panel de Admin</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )}
             <SidebarMenuItem>
                 <SidebarMenuButton
                     as={Link}
                     href="/dashboard/settings"
-                    onClick={(e) => {e.preventDefault(); handleNavigation('/dashboard/settings')}}
                     isActive={pathname === '/dashboard/settings'}
                     tooltip={{children: "Configuración"}}
                     className="text-blue-500 hover:bg-blue-500/10 hover:text-blue-500 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500"
@@ -193,14 +160,6 @@ export default function DashboardLayout({
             <UserNav />
         </header>
         <main className="relative flex-1 overflow-auto p-4 md:p-6">
-            {isNavigating && (
-              <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
-                    <p className="text-muted-foreground">Cargando herramienta...</p>
-                </div>
-              </div>
-            )}
             {children}
         </main>
       </SidebarInset>

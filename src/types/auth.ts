@@ -13,7 +13,7 @@ export interface User {
   toolUsage?: ToolUsage;
   achievements?: string[];
   favoriteResources?: string[];
-  role?: 'admin' | 'user';
+  role?: 'user';
 }
 
 export interface RegisterCredentials extends Omit<User, 'uid' | 'password'> {
@@ -46,9 +46,5 @@ export interface AuthContextType {
   addXP?: (amount: number, toolId?: string) => void;
   updateUser?: (newDetails: Partial<User>) => void;
   toggleFavoriteResource?: (resourceId: string) => void;
-  forceRoleSync?: () => void;
-  getAllUsers?: () => Promise<User[]>;
   submitSuggestion?: (text: string) => void;
-  getAllSuggestions?: () => Promise<Suggestion[]>;
-  updateSuggestionStatus?: (suggestionId: string, status: SuggestionStatus) => void;
 }

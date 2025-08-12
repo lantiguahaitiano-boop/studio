@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Sun, ShieldCheck, Send, Loader2 } from "lucide-react";
+import { Moon, Sun, Send, Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,10 +33,8 @@ const suggestionFormSchema = z.object({
   suggestion: z.string().min(10, { message: "La sugerencia debe tener al menos 10 caracteres."}),
 });
 
-const ADMIN_EMAIL = 'lantiguayordaly76@gmail.com';
-
 export default function SettingsPage() {
-  const { user, updateUser, forceRoleSync, submitSuggestion } = useAuth();
+  const { user, updateUser, submitSuggestion } = useAuth();
   const { setTheme } = useTheme();
   const { toast } = useToast();
   const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
@@ -93,16 +91,6 @@ export default function SettingsPage() {
         });
     } finally {
         setIsSubmittingSuggestion(false);
-    }
-  }
-
-  async function handleRoleSync() {
-    if (forceRoleSync) {
-        await forceRoleSync();
-        toast({
-            title: "Rol Sincronizado",
-            description: "Tu rol de administrador ha sido verificado y actualizado. Puede que necesites recargar la página.",
-        });
     }
   }
 
@@ -190,21 +178,6 @@ export default function SettingsPage() {
                   </div>
               </CardContent>
             </Card>
-
-            {user?.email === ADMIN_EMAIL && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Opciones de Administrador</CardTitle>
-                  <CardDescription>Herramientas especiales para la gestión.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Button onClick={handleRoleSync} variant="outline">
-                        <ShieldCheck className="mr-2 h-4 w-4" />
-                        Forzar Sincronización de Rol
-                    </Button>
-                </CardContent>
-              </Card>
-            )}
         </div>
       </div>
       

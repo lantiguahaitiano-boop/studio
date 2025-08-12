@@ -11,15 +11,13 @@ import {
   signInWithPopup,
   User as FirebaseUser
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
-import type { User, AuthContextType, RegisterCredentials, LoginCredentials, Suggestion, SuggestionStatus } from '@/types/auth';
+import type { User, AuthContextType, RegisterCredentials, LoginCredentials } from '@/types/auth';
 import { achievementsList, checkAchievements } from '@/lib/achievements';
 import { useToast } from '@/hooks/use-toast';
 
 const AuthContext = createContext<AuthContextType | null>(null);
-
-const ADMIN_EMAIL = 'lantiguayordaly76@gmail.com';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -46,7 +44,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 toolUsage: {},
                 achievements: [],
                 favoriteResources: [],
-                role: firebaseUser.email === ADMIN_EMAIL ? 'admin' : 'user',
             };
             await setDoc(userDocRef, newUser);
             setUser(newUser);
@@ -75,11 +72,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         toolUsage: {},
         achievements: [],
         favoriteResources: [],
-        role: email === ADMIN_EMAIL ? 'admin' : 'user',
       };
       
       await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
-      // Let the RegisterForm component handle redirection
       return true;
     } catch (error: any) {
       console.error("Error during registration:", error);
@@ -111,7 +106,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
       
-      // Check if user exists in Firestore, if not create a new document
       const userDocRef = doc(db, 'users', firebaseUser.uid);
       const userDoc = await getDoc(userDocRef);
 
@@ -125,7 +119,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             toolUsage: {},
             achievements: [],
             favoriteResources: [],
-            role: firebaseUser.email === ADMIN_EMAIL ? 'admin' : 'user',
         };
         await setDoc(userDocRef, newUser);
       }
@@ -143,32 +136,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
   
-  const forceRoleSync = async () => {
-      if (!user || !user.uid) return;
-      const userRole = user.email === ADMIN_EMAIL ? 'admin' : 'user';
-      if (user.role !== userRole) {
-        await updateUser({ role: userRole });
-      }
-  };
-
   const addXP = async (amount: number, toolId?: string) => {
     if (!user || !user.uid) return;
 
-    // We fetch the latest user data to avoid race conditions
     const userDocRef = doc(db, 'users', user.uid);
     const userDoc = await getDoc(userDocRef);
     if (!userDoc.exists()) return;
 
     let updatedUser = userDoc.data() as User;
     
-    // Update tool usage
     if (toolId) {
       const toolUsage = { ...updatedUser.toolUsage };
       toolUsage[toolId] = (toolUsage[toolId] || 0) + 1;
       updatedUser.toolUsage = toolUsage;
     }
 
-    // Check for new achievements
     const unlockedAchievements = checkAchievements(updatedUser);
     let newAchievementsXP = 0;
     
@@ -187,7 +169,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         updatedUser.achievements = [...(updatedUser.achievements || []), ...unlockedAchievements];
     }
     
-    // Update XP and Level
     const totalNewXP = amount + newAchievementsXP;
     const newXP = (updatedUser.xp || 0) + totalNewXP;
     const currentLevel = updatedUser.level || 1;
@@ -208,9 +189,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updatedUser.xp = xpForNext;
     updatedUser.level = newLevel;
     
-    // Persist changes to Firestore
     await updateDoc(userDocRef, updatedUser);
-    setUser({...updatedUser, uid: user.uid }); // Update local state
+    setUser({...updatedUser, uid: user.uid });
   };
 
   const updateUser = async (newDetails: Partial<User>) => {
@@ -230,14 +210,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await updateUser({ favoriteResources: newFavorites });
   };
   
-  const getAllUsers = async (): Promise<User[]> => {
-    if (user?.role !== 'admin') return [];
-    const usersCol = collection(db, 'users');
-    const userSnapshot = await getDocs(usersCol);
-    const userList = userSnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id } as User));
-    return userList;
-  };
-  
   const submitSuggestion = async (text: string) => {
     if (!user) return;
     const newSuggestion = {
@@ -250,31 +222,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await addDoc(collection(db, 'suggestions'), newSuggestion);
   };
   
-  const getAllSuggestions = async (): Promise<Suggestion[]> => {
-     if (user?.role !== 'admin') return [];
-     const suggestionsCol = collection(db, 'suggestions');
-     const q = query(suggestionsCol, orderBy('timestamp', 'desc'));
-     const suggestionSnapshot = await getDocs(q);
-     const suggestionList = suggestionSnapshot.docs.map(doc => {
-         const data = doc.data();
-         return {
-             ...data,
-             id: doc.id,
-             timestamp: (data.timestamp as Timestamp).toDate().toISOString(),
-         } as Suggestion;
-     });
-     return suggestionList;
-  };
-  
-  const updateSuggestionStatus = async (suggestionId: string, status: SuggestionStatus) => {
-    if (user?.role !== 'admin') return;
-    const suggestionDocRef = doc(db, 'suggestions', suggestionId);
-    await updateDoc(suggestionDocRef, { status });
-  };
-
-
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, signInWithGoogle, logout, addXP, updateUser, toggleFavoriteResource, forceRoleSync, getAllUsers, submitSuggestion, getAllSuggestions, updateSuggestionStatus }}>
+    <AuthContext.Provider value={{ user, loading, register, login, signInWithGoogle, logout, addXP, updateUser, toggleFavoriteResource, submitSuggestion }}>
       {children}
     </AuthContext.Provider>
   );
