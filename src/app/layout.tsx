@@ -33,10 +33,10 @@ export default function RootLayout({
         >
           <LoadingProvider>
             <AuthProvider>
-              <NavigationLoader />
               {children}
               <Toaster />
             </AuthProvider>
+            <NavigationLoader />
           </LoadingProvider>
         </ThemeProvider>
       </body>
