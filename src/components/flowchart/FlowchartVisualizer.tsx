@@ -64,30 +64,28 @@ const RenderedTree: React.FC<{
   return (
     <div className="flex flex-col items-center">
       <Node node={node} />
-      {outgoingEdges.length > 0 && <Edge label={outgoingEdges.length === 1 ? outgoingEdges[0].label : undefined} />}
+      {outgoingEdges.length > 0 && node.type !== 'decision' && <Edge label={outgoingEdges[0].label} />}
       
-      {outgoingEdges.length > 1 ? (
-        <div className="flex w-full items-start justify-around gap-4">
-          {outgoingEdges.map(edge => (
-            <div key={edge.to} className="flex flex-1 flex-col items-center gap-2">
-              <div className="rounded-md bg-muted px-3 py-1 text-xs font-bold">{edge.label}</div>
-               <RenderedTree
-                nodeId={edge.to}
-                nodeMap={nodeMap}
-                edgeMap={edgeMap}
-                renderedNodeIds={renderedNodeIds}
-              />
-            </div>
-          ))}
+      {outgoingEdges.length > 0 && (
+         <div className={cn("flex w-full", outgoingEdges.length > 1 ? "items-start justify-around gap-4" : "flex-col items-center")}>
+            {outgoingEdges.map(edge => (
+                <div key={edge.to} className="flex flex-1 flex-col items-center gap-2">
+                {node.type === 'decision' && (
+                    <>
+                        <div className="rounded-md bg-muted px-3 py-1 text-xs font-bold">{edge.label}</div>
+                        <Edge />
+                    </>
+                )}
+                <RenderedTree
+                    nodeId={edge.to}
+                    nodeMap={nodeMap}
+                    edgeMap={edgeMap}
+                    renderedNodeIds={renderedNodeIds}
+                />
+                </div>
+            ))}
         </div>
-      ) : outgoingEdges.length === 1 ? (
-        <RenderedTree
-          nodeId={outgoingEdges[0].to}
-          nodeMap={nodeMap}
-          edgeMap={edgeMap}
-          renderedNodeIds={renderedNodeIds}
-        />
-      ) : null}
+      )}
     </div>
   );
 };
