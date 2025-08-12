@@ -30,7 +30,7 @@ const prompt = ai.definePrompt({
   input: { schema: CorrectEssayInputSchema },
   output: { schema: CorrectEssayOutputSchema },
   prompt: `You are an expert essay corrector. Your task is to review the following text for grammatical errors and style improvements. Provide a corrected version of the text.
-  IMPORTANT: Your response must be in Spanish.
+  IMPORTANT: Your response must be in Spanish. The original text is in Spanish, so all corrections must maintain the language.
 
   Original Text:
   {{{text}}}
