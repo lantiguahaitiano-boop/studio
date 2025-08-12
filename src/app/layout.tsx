@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { LoadingProvider } from '@/context/LoadingProvider';
 import { NavigationLoader } from '@/components/layout/NavigationLoader';
+import React from 'react';
 
 export const metadata: Metadata = {
   title: 'Skillico',
@@ -36,7 +37,9 @@ export default function RootLayout({
               {children}
               <Toaster />
             </AuthProvider>
-            <NavigationLoader />
+            <React.Suspense fallback={null}>
+              <NavigationLoader />
+            </React.Suspense>
           </LoadingProvider>
         </ThemeProvider>
       </body>
