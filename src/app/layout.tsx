@@ -4,7 +4,8 @@ import { cn } from "@/lib/utils";
 import { AuthProvider } from '@/context/AuthProvider';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/context/ThemeProvider';
-import { AnimatePresence } from 'framer-motion';
+import { LoadingProvider } from '@/context/LoadingProvider';
+import { NavigationLoader } from '@/components/layout/NavigationLoader';
 
 export const metadata: Metadata = {
   title: 'LearnPro',
@@ -30,10 +31,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            {children}
-            <Toaster />
-          </AuthProvider>
+          <LoadingProvider>
+            <AuthProvider>
+              <NavigationLoader />
+              {children}
+              <Toaster />
+            </AuthProvider>
+          </LoadingProvider>
         </ThemeProvider>
       </body>
     </html>
