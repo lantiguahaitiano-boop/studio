@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { createPresentation } from '@/ai/flows/presentation-creator';
+import { createPresentation, CreatePresentationOutput } from '@/ai/flows/presentation-creator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Loader2, Sparkles, Presentation as PresentationIcon, BookCheck, ClipboardList } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
@@ -24,7 +24,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function PresentationCreatorPage() {
-  const [slides, setSlides] = useState<string[] | null>(null);
+  const [presentationPlan, setPresentationPlan] = useState<CreatePresentationOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { addXP } = useAuth();
   const { toast } = useToast();
@@ -39,10 +39,10 @@ export default function PresentationCreatorPage() {
 
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
-    setSlides(null);
+    setPresentationPlan(null);
     try {
       const result = await createPresentation(values);
-      setSlides(result.slides);
+      setPresentationPlan(result);
       addXP(10, 'presentation-creator');
       toast({
         title: "✨ +10 XP",
@@ -50,7 +50,11 @@ export default function PresentationCreatorPage() {
       });
     } catch (error) {
       console.error(error);
-      // Handle error display
+      toast({
+        variant: 'destructive',
+        title: 'Error al generar la presentación',
+        description: 'Hubo un problema al crear el plan. Por favor, inténtalo de nuevo.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +64,7 @@ export default function PresentationCreatorPage() {
     <AnimatedDiv className="space-y-6">
       <div>
         <h1 className="font-headline text-3xl font-bold tracking-tighter md:text-4xl">Creador de Exposiciones</h1>
-        <p className="text-muted-foreground">Genera contenido para tus diapositivas sobre cualquier tema.</p>
+        <p className="text-muted-foreground">Genera un plan estructurado para tus exposiciones sobre cualquier tema.</p>
       </div>
 
       <Card>
@@ -88,7 +92,7 @@ export default function PresentationCreatorPage() {
                 name="slideCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Número de Diapositivas: {field.value}</FormLabel>
+                    <FormLabel>Número de Secciones Principales: {field.value}</FormLabel>
                     <FormControl>
                       <Slider
                         min={3}
@@ -104,9 +108,9 @@ export default function PresentationCreatorPage() {
               />
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creando...</>
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creando Plan...</>
                 ) : (
-                  <><Sparkles className="mr-2 h-4 w-4" /> Generar Exposición</>
+                  <><Sparkles className="mr-2 h-4 w-4" /> Generar Plan de Exposición</>
                 )}
               </Button>
             </form>
@@ -117,44 +121,47 @@ export default function PresentationCreatorPage() {
       {isLoading && (
         <Card>
           <CardHeader>
-            <CardTitle>Diapositivas Generadas</CardTitle>
+            <CardTitle>Plan de Exposición</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-center p-12">
             <div className="flex items-center space-x-2">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
-              <p>Generando diapositivas...</p>
+              <p>La IA está estructurando la información...</p>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {slides && !isLoading && (
+      {presentationPlan && !isLoading && (
         <AnimatedDiv>
         <Card>
           <CardHeader>
-            <CardTitle>Diapositivas Generadas</CardTitle>
+            <CardTitle>{presentationPlan.title}</CardTitle>
+            <CardDescription>Aquí tienes una estructura sugerida para tu exposición.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Carousel className="w-full">
-              <CarouselContent>
-                {slides.map((slideContent, index) => (
-                  <CarouselItem key={index}>
-                    <div className="p-1">
-                      <Card className="h-80 bg-muted/50">
-                        <CardHeader>
-                          <CardTitle className="font-headline">Diapositiva {index + 1}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex h-full items-center justify-center p-6 text-center">
-                          <p className="whitespace-pre-wrap">{slideContent}</p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </CarouselItem>
+            <Accordion type="single" collapsible defaultValue="item-intro" className="w-full">
+                <AccordionItem value="item-intro">
+                    <AccordionTrigger><div className="flex items-center gap-2"><ClipboardList className="h-5 w-5"/>Introducción</div></AccordionTrigger>
+                    <AccordionContent className="whitespace-pre-wrap pl-8 text-muted-foreground">{presentationPlan.introduction}</AccordionContent>
+                </AccordionItem>
+                {presentationPlan.sections.map((section, index) => (
+                    <AccordionItem value={`item-${index}`} key={index}>
+                        <AccordionTrigger><div className="flex items-center gap-2"><PresentationIcon className="h-5 w-5"/>{section.title}</div></AccordionTrigger>
+                        <AccordionContent className="pl-8">
+                          <ul className="list-disc space-y-2 pl-5 text-muted-foreground">
+                            {section.points.map((point, pointIndex) => (
+                              <li key={pointIndex}>{point}</li>
+                            ))}
+                          </ul>
+                        </AccordionContent>
+                    </AccordionItem>
                 ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+                 <AccordionItem value="item-conclusion">
+                    <AccordionTrigger><div className="flex items-center gap-2"><BookCheck className="h-5 w-5"/>Conclusión</div></AccordionTrigger>
+                    <AccordionContent className="whitespace-pre-wrap pl-8 text-muted-foreground">{presentationPlan.conclusion}</AccordionContent>
+                </AccordionItem>
+            </Accordion>
           </CardContent>
         </Card>
         </AnimatedDiv>
