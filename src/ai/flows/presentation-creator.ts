@@ -44,9 +44,9 @@ El guion debe ser coherente y el contenido de cada expositor debe fluir de maner
 
 El guion debe incluir:
 1.  Un título principal.
-2.  Una introducción (asignada al Expositor 1).
-3.  Párrafos de contenido dedicados para cada uno de los {{exhibitorCount}} expositores.
-4.  Una conclusión (asignada al último expositor).
+2.  Una introducción GENERAL del tema, que será dicha únicamente por el Expositor 1.
+3.  Párrafos de contenido para cada uno de los {{exhibitorCount}} expositores. Los expositores que no son el primero ni el último deben presentar ÚNICAMENTE la información que les corresponde, sin frases introductorias como "A continuación, yo les hablaré de...". Su contenido debe ser directo.
+4.  Una conclusión para resumir los puntos clave, que será dicha por el último expositor.
 
 La longitud de la presentación debe ser '{{length}}'. Ajusta la profundidad y el detalle del contenido de cada expositor en consecuencia:
 - 'corta': Puntos breves y concisos, directos al grano.
