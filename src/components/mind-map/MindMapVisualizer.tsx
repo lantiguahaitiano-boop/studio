@@ -85,6 +85,6 @@ export const MindMapVisualizer: React.FC<MindMapVisualizerProps> = ({ node, leve
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
