@@ -57,6 +57,9 @@ const prompt = ai.definePrompt({
 
   Process description:
   {{{process}}}
+  
+  IMPORTANT: If the user's input does not describe a clear, step-by-step process (e.g., it's just a topic, a question, or a statement), you MUST generate a flowchart that explains the error to the user. This "error" flowchart should have a 'start' node, an 'io' node explaining that the input was not a process, a 'process' node suggesting an example of a good process, and an 'end' node.
+  For example, if the input is "the solar system", create an error flowchart instructing the user to provide a process like "how a bill becomes a law".
   `,
   model: googleAI.model('gemini-1.5-flash-latest'),
 });
