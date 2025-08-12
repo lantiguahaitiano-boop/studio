@@ -184,7 +184,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
             <CardTitle>Buzón de Sugerencias</CardTitle>
-            <CardDescription>¿Tienes una idea para mejorar LearnPro? ¡Nos encantaría escucharla!</CardDescription>
+            <CardDescription>¿Tienes una idea para mejorar Skillico? ¡Nos encantaría escucharla!</CardDescription>
         </CardHeader>
         <CardContent>
             <Form {...suggestionForm}>

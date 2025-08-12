@@ -1,5 +1,5 @@
 
-import { LearnProLogo } from '@/components/icons/LearnProLogo';
+import { SkillicoLogo } from '@/components/icons/SkillicoLogo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +10,9 @@ export default function PrivacyPolicyPage() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <LearnProLogo className="h-8 w-8" />
+            <SkillicoLogo className="h-8 w-8" />
             <div className="flex items-center gap-2">
-                <span className="font-bold sm:inline-block font-headline text-2xl">LearnPro</span>
+                <span className="font-bold sm:inline-block font-headline text-2xl">Skillico</span>
                 <Badge variant="secondary">BETA</Badge>
             </div>
           </Link>
@@ -35,7 +35,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-muted-foreground">Última actualización: {new Date().toLocaleDateString()}</p>
 
             <h2>1. Introducción</h2>
-            <p>Esta Política de Privacidad describe cómo LearnPro ("nosotros", "nuestro" o "nos") recopila, utiliza y divulga su información personal cuando utiliza nuestro sitio web y nuestros servicios.</p>
+            <p>Esta Política de Privacidad describe cómo Skillico ("nosotros", "nuestro" o "nos") recopila, utiliza y divulga su información personal cuando utiliza nuestro sitio web y nuestros servicios.</p>
 
             <h2>2. Información que Recopilamos</h2>
             <p>Recopilamos información que usted nos proporciona directamente, como cuando crea una cuenta a través de nuestro formulario de registro o mediante un proveedor de autenticación como Google. La información que podemos recopilar incluye:</p>
@@ -74,9 +74,9 @@ export default function PrivacyPolicyPage() {
         <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
            <div className="flex flex-col items-center gap-2 md:flex-row">
                 <div className="flex items-center gap-2">
-                    <LearnProLogo className="h-6 w-6" />
+                    <SkillicoLogo className="h-6 w-6" />
                     <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} LearnPro. Todos los derechos reservados.
+                        © {new Date().getFullYear()} Skillico. Todos los derechos reservados.
                     </p>
                 </div>
            </div>

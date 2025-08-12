@@ -67,25 +67,23 @@ export function RegisterForm() {
     if (!signInWithGoogle) return;
     setIsGoogleLoading(true);
     try {
-        const success = await signInWithGoogle();
-         if (!success) {
-          toast({
+        await signInWithGoogle();
+    } catch (error) {
+         toast({
             variant: "destructive",
             title: "Error de inicio de sesión",
             description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
           });
-        }
     } finally {
         setIsGoogleLoading(false);
     }
-    // On success, the AuthProvider handles the redirect, so we don't need to set loading to false here.
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="font-headline text-2xl">Crear Cuenta</CardTitle>
-        <CardDescription>Únete a LearnPro y potencia tu aprendizaje.</CardDescription>
+        <CardDescription>Únete a Skillico y potencia tu aprendizaje.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>

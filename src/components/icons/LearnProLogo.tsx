@@ -1,27 +1,31 @@
-import * as React from 'react';
+'use client';
 
-export function LearnProLogo(props: React.SVGProps<SVGSVGElement>) {
+import { useLoading } from '@/hooks/use-loading';
+import { SkillicoLogo } from '@/components/icons/SkillicoLogo';
+import { AnimatePresence, motion } from 'framer-motion';
+
+export function LoadingOverlay() {
+  const { isLoading } = useLoading();
+
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <defs>
-        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: 'hsl(var(--accent))', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: 'hsl(var(--primary))', stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" fill="url(#logo-gradient)" stroke="none" />
-      <path d="M18 9h2a2 2 0 0 1 2 2v4l-4 4H6a2 2 0 0 1-2-2v-2" stroke="url(#logo-gradient)" />
-    </svg>
+    <AnimatePresence>
+      {isLoading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm"
+        >
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative h-16 w-16">
+                <div className="absolute inset-0 h-full w-full animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+                <SkillicoLogo className="h-16 w-16 p-3 text-primary" />
+            </div>
+            <p className="text-lg font-semibold text-muted-foreground animate-pulse">Cargando...</p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

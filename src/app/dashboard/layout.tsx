@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
@@ -40,10 +40,9 @@ import {
   Shield,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
-import { LearnProLogo } from '@/components/icons/LearnProLogo';
+import { SkillicoLogo } from '@/components/icons/SkillicoLogo';
 import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLoading } from '@/hooks/use-loading';
 
 const menuItems = [
     { href: '/dashboard/task-assistant', label: 'Asistente de Tareas IA', icon: BookOpenCheck },
@@ -71,11 +70,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, loading, logout } = useAuth();
-  const { setIsLoading } = useLoading();
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (loading) return;
     if (!user) {
       router.replace('/login');
@@ -89,27 +87,18 @@ export default function DashboardLayout({
   }
 
   if (loading || !user) {
-    // This now shows the global loading screen handled by the provider
     return null;
-  }
-
-  const handleNavigation = (e: React.MouseEvent<HTMLButtonElement>, href: string) => {
-    e.preventDefault();
-    if (pathname !== href) {
-        if(setIsLoading) setIsLoading(true);
-        router.push(href);
-    }
   }
   
   return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <Link href="/dashboard" className="flex items-center gap-2" onClick={(e) => { e.preventDefault(); if (pathname !== '/dashboard') { setIsLoading?.(true); router.push('/dashboard');}}}>
-            <LearnProLogo className="size-8" />
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <SkillicoLogo className="size-8" />
             <div className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
                 <h1 className="font-headline text-2xl font-bold text-primary">
-                LearnPro
+                Skillico
                 </h1>
                 <Badge variant="secondary" className="text-xs">BETA</Badge>
             </div>
@@ -120,7 +109,7 @@ export default function DashboardLayout({
                 {menuItems.map((item) => 
                     <SidebarMenuItem key={item.href}>
                         <SidebarMenuButton
-                            onClick={(e) => handleNavigation(e, item.href)}
+                            as="a"
                             href={item.href}
                             isActive={pathname === item.href}
                             tooltip={{children: item.label}}
@@ -136,7 +125,7 @@ export default function DashboardLayout({
           <SidebarMenu>
             <SidebarMenuItem>
                 <SidebarMenuButton
-                    onClick={(e) => handleNavigation(e, '/dashboard/settings')}
+                    as="a"
                     href="/dashboard/settings"
                     isActive={pathname === '/dashboard/settings'}
                     tooltip={{children: "Configuración"}}

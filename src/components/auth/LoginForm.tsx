@@ -44,14 +44,13 @@ export function LoginForm() {
     if (!login) return;
     setIsLoading(true);
     try {
-        const success = await login(values);
-        if (!success) {
-          toast({
+        await login(values);
+    } catch (error) {
+        toast({
             variant: "destructive",
             title: "Error de inicio de sesión",
             description: "El correo o la contraseña son incorrectos.",
-          });
-        }
+        });
     } finally {
         setIsLoading(false);
     }
@@ -61,25 +60,23 @@ export function LoginForm() {
     if (!signInWithGoogle) return;
     setIsGoogleLoading(true);
     try {
-        const success = await signInWithGoogle();
-         if (!success) {
-          toast({
+        await signInWithGoogle();
+    } catch (error) {
+         toast({
             variant: "destructive",
             title: "Error de inicio de sesión",
             description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
           });
-        }
     } finally {
         setIsGoogleLoading(false);
     }
-    // On success, the AuthProvider handles the redirect, so we don't need to set loading to false here.
   }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="font-headline text-2xl">Iniciar Sesión</CardTitle>
-        <CardDescription>Accede a tu panel de control de LearnPro.</CardDescription>
+        <CardDescription>Accede a tu panel de control de Skillico.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>

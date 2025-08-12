@@ -8,7 +8,7 @@ import { LoadingProvider } from '@/context/LoadingProvider';
 import { NavigationLoader } from '@/components/layout/NavigationLoader';
 
 export const metadata: Metadata = {
-  title: 'LearnPro',
+  title: 'Skillico',
   description: 'Tu asistente educativo inteligente.',
 };
 
