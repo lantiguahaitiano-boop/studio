@@ -12,19 +12,19 @@ import {z} from 'genkit';
 
 const CreatePresentationInputSchema = z.object({
   topic: z.string().describe('The topic of the presentation.'),
-  speakerCount: z.number().describe('The number of people who will be presenting.'),
+  exhibitorCount: z.number().describe('The number of people who will be presenting.'),
   length: z.enum(['corta', 'media', 'larga']).describe('The desired length of the presentation.'),
 });
 export type CreatePresentationInput = z.infer<typeof CreatePresentationInputSchema>;
 
 const CreatePresentationOutputSchema = z.object({
   title: z.string().describe('The main title of the presentation.'),
-  introduction: z.string().describe('A brief introduction to the topic. This part is for the first speaker.'),
-  speakerSections: z.array(z.object({
-    speaker: z.number().describe('The speaker number (e.g., 1, 2, 3).'),
-    content: z.string().describe('The paragraph or content assigned to this speaker.'),
-  })).describe('An array of content sections, one for each speaker.'),
-  conclusion: z.string().describe('A concluding summary for the presentation. This part is for the last speaker.'),
+  introduction: z.string().describe('A brief introduction to the topic. This part is for the first exhibitor.'),
+  exhibitorSections: z.array(z.object({
+    exhibitor: z.number().describe('The exhibitor number (e.g., 1, 2, 3).'),
+    content: z.string().describe('The paragraph or content assigned to this exhibitor.'),
+  })).describe('An array of content sections, one for each exhibitor.'),
+  conclusion: z.string().describe('A concluding summary for the presentation. This part is for the last exhibitor.'),
 });
 export type CreatePresentationOutput = z.infer<typeof CreatePresentationOutputSchema>;
 
@@ -37,23 +37,29 @@ const prompt = ai.definePrompt({
   name: 'createPresentationPrompt',
   input: {schema: CreatePresentationInputSchema},
   output: {schema: CreatePresentationOutputSchema},
-  prompt: `You are an expert presentation creator. You will generate a structured script for a presentation on a given topic for a specific number of speakers.
-  IMPORTANT: Your response must be in Spanish.
+  prompt: `Eres un experto guionista de presentaciones. Tu tarea es generar un guion claro, natural y bien estructurado sobre un tema específico, distribuyendo el contenido entre varios expositores.
+  IMPORTANTE: Tu respuesta debe ser en español.
 
-The script should include a main title, an introduction (for Speaker 1), a dedicated content paragraph for each of the {{speakerCount}} speakers, and a conclusion (for the last speaker).
+El guion debe ser coherente y el contenido de cada expositor debe fluir de manera lógica.
 
-The length of the presentation should be '{{length}}'. Adjust the depth and detail of each speaker's content accordingly.
-- 'corta': Brief and concise points.
-- 'media': More detailed explanations.
-- 'larga': In-depth analysis with more data or examples.
+El guion debe incluir:
+1.  Un título principal.
+2.  Una introducción (asignada al Expositor 1).
+3.  Párrafos de contenido dedicados para cada uno de los {{exhibitorCount}} expositores.
+4.  Una conclusión (asignada al último expositor).
 
-The output must be structured with a title, introduction, an array of speakerSections, and a conclusion. Each element in the speakerSections array must clearly indicate the speaker number and their assigned content.
+La longitud de la presentación debe ser '{{length}}'. Ajusta la profundidad y el detalle del contenido de cada expositor en consecuencia:
+- 'corta': Puntos breves y concisos, directos al grano.
+- 'media': Explicaciones más detalladas y elaboradas.
+- 'larga': Un análisis en profundidad, con más datos, ejemplos o detalles específicos.
 
-Topic: {{{topic}}}
-Number of speakers: {{{speakerCount}}}
-Length: {{{length}}}
+El resultado debe ser un JSON estructurado con un título, introducción, un array de \`exhibitorSections\` y una conclusión. Cada elemento en \`exhibitorSections\` debe indicar claramente el número del expositor y el contenido que se le ha asignado. Asegúrate de que el contenido sea informativo, relevante y fácil de entender para una audiencia.
 
-Generate the content script. The content should be informative and well-organized.`,
+Tema: {{{topic}}}
+Número de expositores: {{{exhibitorCount}}}
+Longitud: {{{length}}}
+
+Genera el guion del contenido.`,
   model: googleAI.model('gemini-1.5-flash-latest'),
 });
 

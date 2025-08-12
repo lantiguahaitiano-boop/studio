@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { Loader2, Sparkles, Presentation as PresentationIcon, Users, Rows } from 'lucide-react';
+import { Loader2, Sparkles, Presentation as PresentationIcon, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
@@ -19,7 +19,7 @@ import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: 'El tema debe tener al menos 3 caracteres.' }),
-  speakerCount: z.number().min(1).max(10),
+  exhibitorCount: z.number().min(1).max(10),
   length: z.enum(['corta', 'media', 'larga']),
 });
 
@@ -35,7 +35,7 @@ export default function PresentationCreatorPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       topic: '',
-      speakerCount: 1,
+      exhibitorCount: 1,
       length: 'media',
     },
   });
@@ -94,10 +94,10 @@ export default function PresentationCreatorPage() {
                   />
                   <FormField
                     control={form.control}
-                    name="speakerCount"
+                    name="exhibitorCount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Número de Oradores: {field.value}</FormLabel>
+                        <FormLabel>Número de Expositores: {field.value}</FormLabel>
                         <FormControl>
                           <Slider
                             min={1}
@@ -122,7 +122,7 @@ export default function PresentationCreatorPage() {
                             type="single"
                             defaultValue={field.value}
                             onValueChange={(value) => {
-                                if (value) field.onChange(value)
+                                if (value) field.onChange(value as 'corta' | 'media' | 'larga')
                             }}
                             className="grid grid-cols-3"
                           >
@@ -167,20 +167,20 @@ export default function PresentationCreatorPage() {
                         
                         <Separator className="my-4" />
                         
-                        <h3 className="font-headline text-lg">Introducción (Orador 1)</h3>
+                        <h3 className="font-headline text-lg">Introducción (Expositor 1)</h3>
                         <p>{presentationPlan.introduction}</p>
 
-                        {presentationPlan.speakerSections.map((section, index) => (
+                        {presentationPlan.exhibitorSections.map((section, index) => (
                             <div key={index} className="mt-4">
                                 <Separator className="my-4" />
-                                <h3 className="font-headline text-lg">Orador {section.speaker}</h3>
+                                <h3 className="font-headline text-lg">Expositor {section.exhibitor}</h3>
                                 <p>{section.content}</p>
                             </div>
                         ))}
                         
                         <Separator className="my-4" />
 
-                        <h3 className="font-headline text-lg mt-4">Conclusión (Último Orador)</h3>
+                        <h3 className="font-headline text-lg mt-4">Conclusión (Último Expositor)</h3>
                         <p>{presentationPlan.conclusion}</p>
                     </AnimatedDiv>
                 )}
