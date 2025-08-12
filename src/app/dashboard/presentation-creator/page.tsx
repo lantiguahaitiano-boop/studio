@@ -10,14 +10,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { Loader2, Sparkles, Presentation as PresentationIcon } from 'lucide-react';
+import { Loader2, Sparkles, Presentation as PresentationIcon, Users, Rows } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: 'El tema debe tener al menos 3 caracteres.' }),
-  slideCount: z.number().min(3).max(15),
+  speakerCount: z.number().min(1).max(10),
+  length: z.enum(['corta', 'media', 'larga']),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -32,7 +35,8 @@ export default function PresentationCreatorPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       topic: '',
-      slideCount: 5,
+      speakerCount: 1,
+      length: 'media',
     },
   });
 
@@ -90,14 +94,14 @@ export default function PresentationCreatorPage() {
                   />
                   <FormField
                     control={form.control}
-                    name="slideCount"
+                    name="speakerCount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Número de Secciones Principales: {field.value}</FormLabel>
+                        <FormLabel>Número de Oradores: {field.value}</FormLabel>
                         <FormControl>
                           <Slider
-                            min={3}
-                            max={15}
+                            min={1}
+                            max={10}
                             step={1}
                             defaultValue={[field.value]}
                             onValueChange={(vals) => field.onChange(vals[0])}
@@ -107,9 +111,33 @@ export default function PresentationCreatorPage() {
                       </FormItem>
                     )}
                   />
+                   <FormField
+                    control={form.control}
+                    name="length"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Longitud del Contenido</FormLabel>
+                        <FormControl>
+                          <ToggleGroup
+                            type="single"
+                            defaultValue={field.value}
+                            onValueChange={(value) => {
+                                if (value) field.onChange(value)
+                            }}
+                            className="grid grid-cols-3"
+                          >
+                            <ToggleGroupItem value="corta" aria-label="Corta">Corta</ToggleGroupItem>
+                            <ToggleGroupItem value="media" aria-label="Media">Media</ToggleGroupItem>
+                            <ToggleGroupItem value="larga" aria-label="Larga">Larga</ToggleGroupItem>
+                          </ToggleGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <Button type="submit" disabled={isLoading} className="w-full">
                     {isLoading ? (
-                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creando Plan...</>
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creando Guion...</>
                     ) : (
                       <><Sparkles className="mr-2 h-4 w-4" /> Generar Guion</>
                     )}
@@ -137,21 +165,22 @@ export default function PresentationCreatorPage() {
                     <AnimatedDiv className="prose prose-invert max-w-none rounded-md border bg-muted/30 p-4">
                         <h2 className="font-headline text-2xl text-primary">{presentationPlan.title}</h2>
                         
-                        <h3 className="font-headline text-lg">Introducción</h3>
+                        <Separator className="my-4" />
+                        
+                        <h3 className="font-headline text-lg">Introducción (Orador 1)</h3>
                         <p>{presentationPlan.introduction}</p>
 
-                        {presentationPlan.sections.map((section, index) => (
+                        {presentationPlan.speakerSections.map((section, index) => (
                             <div key={index} className="mt-4">
-                                <h3 className="font-headline text-lg">{section.title}</h3>
-                                <ul className="list-disc pl-5">
-                                    {section.points.map((point, pointIndex) => (
-                                    <li key={pointIndex}>{point}</li>
-                                    ))}
-                                </ul>
+                                <Separator className="my-4" />
+                                <h3 className="font-headline text-lg">Orador {section.speaker}</h3>
+                                <p>{section.content}</p>
                             </div>
                         ))}
+                        
+                        <Separator className="my-4" />
 
-                        <h3 className="font-headline text-lg mt-4">Conclusión</h3>
+                        <h3 className="font-headline text-lg mt-4">Conclusión (Último Orador)</h3>
                         <p>{presentationPlan.conclusion}</p>
                     </AnimatedDiv>
                 )}

@@ -12,18 +12,19 @@ import {z} from 'genkit';
 
 const CreatePresentationInputSchema = z.object({
   topic: z.string().describe('The topic of the presentation.'),
-  slideCount: z.number().describe('The approximate number of sections or key points the presentation should have.'),
+  speakerCount: z.number().describe('The number of people who will be presenting.'),
+  length: z.enum(['corta', 'media', 'larga']).describe('The desired length of the presentation.'),
 });
 export type CreatePresentationInput = z.infer<typeof CreatePresentationInputSchema>;
 
 const CreatePresentationOutputSchema = z.object({
   title: z.string().describe('The main title of the presentation.'),
-  introduction: z.string().describe('A brief introduction to the topic.'),
-  sections: z.array(z.object({
-    title: z.string().describe('The title of this section of the presentation.'),
-    points: z.array(z.string()).describe('An array of key points or content for this section.'),
-  })).describe('The main sections of the presentation.'),
-  conclusion: z.string().describe('A concluding summary for the presentation.'),
+  introduction: z.string().describe('A brief introduction to the topic. This part is for the first speaker.'),
+  speakerSections: z.array(z.object({
+    speaker: z.number().describe('The speaker number (e.g., 1, 2, 3).'),
+    content: z.string().describe('The paragraph or content assigned to this speaker.'),
+  })).describe('An array of content sections, one for each speaker.'),
+  conclusion: z.string().describe('A concluding summary for the presentation. This part is for the last speaker.'),
 });
 export type CreatePresentationOutput = z.infer<typeof CreatePresentationOutputSchema>;
 
@@ -36,15 +37,23 @@ const prompt = ai.definePrompt({
   name: 'createPresentationPrompt',
   input: {schema: CreatePresentationInputSchema},
   output: {schema: CreatePresentationOutputSchema},
-  prompt: `You are an expert presentation creator. You will generate a structured plan for a presentation on a given topic. The user will specify a number of slides, which you should interpret as the number of main sections or key ideas to develop.
+  prompt: `You are an expert presentation creator. You will generate a structured script for a presentation on a given topic for a specific number of speakers.
   IMPORTANT: Your response must be in Spanish.
 
-The plan should include a main title, a brief introduction, several sections with a title and key points, and a conclusion.
+The script should include a main title, an introduction (for Speaker 1), a dedicated content paragraph for each of the {{speakerCount}} speakers, and a conclusion (for the last speaker).
+
+The length of the presentation should be '{{length}}'. Adjust the depth and detail of each speaker's content accordingly.
+- 'corta': Brief and concise points.
+- 'media': More detailed explanations.
+- 'larga': In-depth analysis with more data or examples.
+
+The output must be structured with a title, introduction, an array of speakerSections, and a conclusion. Each element in the speakerSections array must clearly indicate the speaker number and their assigned content.
 
 Topic: {{{topic}}}
-Number of sections/ideas: {{{slideCount}}}
+Number of speakers: {{{speakerCount}}}
+Length: {{{length}}}
 
-Generate the content plan. The content should be concise and informative.`,
+Generate the content script. The content should be informative and well-organized.`,
   model: googleAI.model('gemini-1.5-flash-latest'),
 });
 
