@@ -1,12 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { GenerateFlowchartOutput, FlowchartNode } from '@/ai/flows/flowchart-generator';
+import { GenerateFlowchartOutput, FlowchartNode, FlowchartEdge } from '@/ai/flows/flowchart-generator';
 import { cn } from '@/lib/utils';
 import { ArrowDown } from 'lucide-react';
 
 const getNodeClasses = (type: FlowchartNode['type']) => {
-  const baseClasses = "flex items-center justify-center text-center p-4 min-h-[80px] w-full shadow-md border-2";
+  const baseClasses = "flex items-center justify-center text-center p-4 min-h-[80px] w-full shadow-md border-2 text-sm";
   switch (type) {
     case 'start':
     case 'end':
@@ -14,7 +14,7 @@ const getNodeClasses = (type: FlowchartNode['type']) => {
     case 'process':
       return cn(baseClasses, "rounded-lg bg-primary/20 border-primary text-primary-foreground");
     case 'decision':
-      return cn(baseClasses, "transform -rotate-45 bg-secondary border-secondary-foreground w-[120px] h-[120px] mx-auto");
+      return cn(baseClasses, "transform -rotate-45 bg-secondary border-secondary-foreground w-[140px] h-[140px] mx-auto");
     case 'io':
       return cn(baseClasses, "transform skew-x-[-20deg] bg-muted border-muted-foreground");
     default:
@@ -36,15 +36,62 @@ const Node: React.FC<{ node: FlowchartNode }> = ({ node }) => {
 };
 
 const Edge: React.FC<{ label?: string }> = ({ label }) => (
-  <div className="relative my-4 flex flex-col items-center justify-center text-muted-foreground">
+  <div className="relative my-4 flex h-12 flex-col items-center justify-center text-muted-foreground">
     <ArrowDown className="h-8 w-8 text-primary" />
     {label && (
-        <span className="absolute -right-8 top-1/2 -translate-y-1/2 rounded bg-background px-2 py-1 text-xs font-semibold shadow">
+        <span className="absolute -right-4 top-1/2 -translate-y-1/2 rounded bg-background px-2 py-0.5 text-xs font-semibold shadow-md">
             {label}
         </span>
     )}
   </div>
 );
+
+
+const RenderedTree: React.FC<{
+  nodeId: string;
+  nodeMap: Map<string, FlowchartNode>;
+  edgeMap: Map<string, FlowchartEdge[]>;
+  renderedNodeIds: Set<string>;
+}> = ({ nodeId, nodeMap, edgeMap, renderedNodeIds }) => {
+  if (renderedNodeIds.has(nodeId)) return null;
+
+  const node = nodeMap.get(nodeId);
+  if (!node) return null;
+
+  renderedNodeIds.add(nodeId);
+  const outgoingEdges = edgeMap.get(nodeId) || [];
+
+  return (
+    <div className="flex flex-col items-center">
+      <Node node={node} />
+      {outgoingEdges.length > 0 && <Edge label={outgoingEdges.length === 1 ? outgoingEdges[0].label : undefined} />}
+      
+      {outgoingEdges.length > 1 ? (
+        <div className="flex w-full items-start justify-around gap-4">
+          {outgoingEdges.map(edge => (
+            <div key={edge.to} className="flex flex-1 flex-col items-center gap-2">
+              <div className="rounded-md bg-muted px-3 py-1 text-xs font-bold">{edge.label}</div>
+               <RenderedTree
+                nodeId={edge.to}
+                nodeMap={nodeMap}
+                edgeMap={edgeMap}
+                renderedNodeIds={renderedNodeIds}
+              />
+            </div>
+          ))}
+        </div>
+      ) : outgoingEdges.length === 1 ? (
+        <RenderedTree
+          nodeId={outgoingEdges[0].to}
+          nodeMap={nodeMap}
+          edgeMap={edgeMap}
+          renderedNodeIds={renderedNodeIds}
+        />
+      ) : null}
+    </div>
+  );
+};
+
 
 export const FlowchartVisualizer: React.FC<{ data: GenerateFlowchartOutput }> = ({ data }) => {
   if (!data || !data.nodes || data.nodes.length === 0) {
@@ -53,60 +100,27 @@ export const FlowchartVisualizer: React.FC<{ data: GenerateFlowchartOutput }> = 
 
   const { nodes, edges } = data;
   const nodeMap = new Map(nodes.map(n => [n.id, n]));
+  const edgeMap = new Map<string, FlowchartEdge[]>();
+  edges.forEach(edge => {
+    if (!edgeMap.has(edge.from)) {
+      edgeMap.set(edge.from, []);
+    }
+    edgeMap.get(edge.from)!.push(edge);
+  });
   
-  const startNodeId = nodes.find(n => n.type === 'start')?.id;
-  if (!startNodeId) {
+  const startNode = nodes.find(n => n.type === 'start');
+  if (!startNode) {
       return <p>Diagrama inválido: no se encontró un nodo de inicio.</p>;
   }
 
-  const renderedElements: JSX.Element[] = [];
-  const renderedNodeIds = new Set<string>();
-
-  const renderNodeAndChildren = (nodeId: string) => {
-    if (renderedNodeIds.has(nodeId)) return;
-    
-    const node = nodeMap.get(nodeId);
-    if (!node) return;
-
-    renderedElements.push(<Node key={node.id} node={node} />);
-    renderedNodeIds.add(node.id);
-
-    const outgoingEdges = edges.filter(e => e.from === nodeId);
-
-    if (outgoingEdges.length > 1) { // Typically a decision node
-      renderedElements.push(<Edge key={`${nodeId}-arrow`} />);
-      const decisionWrapper: JSX.Element[] = [];
-      outgoingEdges.forEach(edge => {
-        const nextNode = nodeMap.get(edge.to);
-        if (nextNode) {
-          decisionWrapper.push(
-            <div key={edge.to} className="flex flex-col items-center">
-                <div className="text-center font-bold mb-2 p-2 bg-muted rounded-md">{edge.label || ''}</div>
-                <Node node={nextNode} />
-                {edges.some(e => e.from === nextNode.id) && <Edge key={`${nextNode.id}-arrow`} />}
-                {/* This part is simplified and might not render deep trees correctly */}
-            </div>
-          );
-        }
-      });
-      renderedElements.push(
-        <div key={`${nodeId}-decision-group`} className="flex w-full justify-around gap-4 mt-4">
-            {decisionWrapper}
-        </div>
-      );
-      // For simplicity, stop deep rendering after a multi-path branch
-    } else if (outgoingEdges.length === 1) {
-      const edge = outgoingEdges[0];
-      renderedElements.push(<Edge key={edge.from + '-' + edge.to} label={edge.label} />);
-      renderNodeAndChildren(edge.to);
-    }
-  };
-
-  renderNodeAndChildren(startNodeId);
-
   return (
     <div className="flex flex-col items-center space-y-4 p-4">
-      {renderedElements}
+       <RenderedTree
+        nodeId={startNode.id}
+        nodeMap={nodeMap}
+        edgeMap={edgeMap}
+        renderedNodeIds={new Set<string>()}
+      />
     </div>
   );
 };

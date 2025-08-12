@@ -53,7 +53,7 @@ const prompt = ai.definePrompt({
   - Use 'process' nodes for actions.
   - Use 'decision' nodes for conditional logic (if/else). These should typically have two outgoing edges (e.g., Yes/No).
   - Use 'io' nodes for inputs or outputs.
-  - Ensure all nodes are connected. The 'id' for each node must be unique.
+  - Ensure all nodes are connected. The 'id' for each node must be unique. Make the ids simple like 'node1', 'node2', etc.
 
   Process description:
   {{{process}}}
