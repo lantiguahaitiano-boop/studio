@@ -8,7 +8,7 @@
  * - ExplainConceptOutput - The return type for the explainConcept function.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const ExplainConceptInputSchema = z.object({
@@ -35,7 +35,7 @@ const prompt = ai.definePrompt({
   Concept:
   {{{concept}}}
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const explainConceptFlow = ai.defineFlow(
@@ -45,7 +45,7 @@ const explainConceptFlow = ai.defineFlow(
     outputSchema: ExplainConceptOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

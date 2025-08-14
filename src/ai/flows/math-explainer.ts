@@ -8,7 +8,7 @@
  * - ExplainMathOutput - The return type for the explainMath function.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const ExplainMathInputSchema = z.object({
@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
 
   Provide a detailed explanation of how to arrive at the result.
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const explainMathFlow = ai.defineFlow(
@@ -48,7 +48,7 @@ const explainMathFlow = ai.defineFlow(
     outputSchema: ExplainMathOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

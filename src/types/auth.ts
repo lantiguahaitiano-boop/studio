@@ -41,9 +41,6 @@ export interface AuthContextType {
   loading: boolean;
   register?: (credentials: RegisterCredentials) => Promise<boolean>;
   login?: (credentials: LoginCredentials) => Promise<boolean>;
-  signInWithGoogle?: () => Promise<boolean>;
-  signInWithMicrosoft?: () => Promise<boolean>;
-  signInWithGitHub?: () => Promise<boolean>;
   logout?: () => void;
   forgotPassword?: (email: string) => Promise<boolean>;
   addXP?: (amount: number, toolId?: string) => void;

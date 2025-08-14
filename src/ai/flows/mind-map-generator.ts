@@ -9,7 +9,7 @@
  * - MindMapNode - The recursive type for a node in the mind map.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const GenerateMindMapInputSchema = z.object({
@@ -51,7 +51,7 @@ const prompt = ai.definePrompt({
   Topic:
   {{{topic}}}
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const generateMindMapFlow = ai.defineFlow(
@@ -61,7 +61,7 @@ const generateMindMapFlow = ai.defineFlow(
     outputSchema: GenerateMindMapOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

@@ -16,11 +16,13 @@ import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: 'El tema debe tener al menos 3 caracteres.' }),
   exhibitorCount: z.number().min(1).max(10),
   length: z.enum(['corta', 'media', 'larga']),
+  style: z.enum(['Creativo', 'Formal', 'Divertido', 'Informativo']),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -37,6 +39,7 @@ export default function PresentationCreatorPage() {
       topic: '',
       exhibitorCount: 1,
       length: 'media',
+      style: 'Informativo',
     },
   });
 
@@ -107,6 +110,29 @@ export default function PresentationCreatorPage() {
                             onValueChange={(vals) => field.onChange(vals[0])}
                           />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                   <FormField
+                    control={form.control}
+                    name="style"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Estilo de la Exposición</FormLabel>
+                         <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona un estilo" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectItem value="Informativo">Informativo</SelectItem>
+                                <SelectItem value="Creativo">Creativo</SelectItem>
+                                <SelectItem value="Formal">Formal</SelectItem>
+                                <SelectItem value="Divertido">Divertido</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}

@@ -8,7 +8,7 @@
  * - GenerateExamOutput - The return type for the generateExam function.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const GenerateExamInputSchema = z.object({
@@ -40,7 +40,7 @@ const prompt = ai.definePrompt({
   Topic:
   {{{topic}}}
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const generateExamFlow = ai.defineFlow(
@@ -50,7 +50,7 @@ const generateExamFlow = ai.defineFlow(
     outputSchema: GenerateExamOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

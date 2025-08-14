@@ -8,7 +8,7 @@
  * - GenerateQuizOutput - The return type for the generateQuiz function.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const GenerateQuizInputSchema = z.object({
@@ -39,7 +39,7 @@ const prompt = ai.definePrompt({
   Source Text:
   {{{text}}}
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const generateQuizFlow = ai.defineFlow(
@@ -49,7 +49,7 @@ const generateQuizFlow = ai.defineFlow(
     outputSchema: GenerateQuizOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

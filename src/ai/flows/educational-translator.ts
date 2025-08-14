@@ -1,8 +1,14 @@
-// EducationalTranslatorFlow translates academic texts with proper context.
-
 'use server';
 
-import {ai, googleAI} from '@/ai/genkit';
+/**
+ * @fileOverview Translates academic texts with proper context.
+ *
+ * - educationalTranslator - A function that handles the translation process.
+ * - EducationalTranslatorInput - The input type for the educationalTranslator function.
+ * - EducationalTranslatorOutput - The return type for the educationalTranslator function.
+ */
+
+import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const EducationalTranslatorInputSchema = z.object({
@@ -25,8 +31,17 @@ const prompt = ai.definePrompt({
   name: 'educationalTranslatorPrompt',
   input: {schema: EducationalTranslatorInputSchema},
   output: {schema: EducationalTranslatorOutputSchema},
-  prompt: `Translate the following academic text to {{targetLanguage}}.\n\nText: {{{text}}}\n\n{% if context %}Context: {{{context}}}{% endif %}`,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  prompt: `You are an expert academic translator. Your task is to translate the following academic text to {{targetLanguage}}. Use the provided context to ensure accuracy.
+  IMPORTANT: Your response must be in the target language.
+
+  Text to translate:
+  {{{text}}}
+  
+  {{#if context}}
+  Context: {{{context}}}
+  {{/if}}
+  `,
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const educationalTranslatorFlow = ai.defineFlow(
@@ -36,7 +51,7 @@ const educationalTranslatorFlow = ai.defineFlow(
     outputSchema: EducationalTranslatorOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

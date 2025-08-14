@@ -163,47 +163,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const socialSignIn = async (provider: GoogleAuthProvider | OAuthProvider | GithubAuthProvider): Promise<boolean> => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
-      
-      const userDocRef = doc(db, 'users', firebaseUser.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        const newUser: User = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email!,
-            name: firebaseUser.displayName!,
-            educationLevel: 'No especificado',
-            xp: 0,
-            level: 1,
-            toolUsage: {},
-            achievements: [],
-            favoriteResources: [],
-        };
-        await setDoc(userDocRef, newUser);
-        setUser(newUser);
-      }
-      
-      router.push('/dashboard');
-      return true;
-    } catch (error) {
-        console.error("Error during social sign-in:", error);
-         toast({
-            variant: "destructive",
-            title: "Error de inicio de sesión",
-            description: "No se pudo iniciar sesión con este proveedor. Inténtalo de nuevo.",
-          });
-        return false;
-    }
-  };
-
-  const signInWithGoogle = () => socialSignIn(new GoogleAuthProvider());
-  const signInWithMicrosoft = () => socialSignIn(new OAuthProvider('microsoft.com'));
-  const signInWithGitHub = () => socialSignIn(new GithubAuthProvider());
-
   const logout = async () => {
     await signOut(auth);
     router.push('/login');
@@ -296,7 +255,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, signInWithGoogle, signInWithMicrosoft, signInWithGitHub, logout, addXP, updateUser, toggleFavoriteResource, submitSuggestion, forgotPassword }}>
+    <AuthContext.Provider value={{ user, loading, register, login, logout, addXP, updateUser, toggleFavoriteResource, submitSuggestion, forgotPassword }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,7 +8,7 @@
  * - PlanProjectOutput - The return type for the planProject function.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const PlanProjectInputSchema = z.object({
@@ -42,7 +42,7 @@ const prompt = ai.definePrompt({
   Topic:
   {{{topic}}}
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const planProjectFlow = ai.defineFlow(
@@ -52,7 +52,7 @@ const planProjectFlow = ai.defineFlow(
     outputSchema: PlanProjectOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );

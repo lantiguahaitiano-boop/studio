@@ -8,7 +8,7 @@
  * - CorrectEssayOutput - The return type for the correctEssay function.
  */
 
-import { ai, googleAI } from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const CorrectEssayInputSchema = z.object({
@@ -35,7 +35,7 @@ const prompt = ai.definePrompt({
   Original Text:
   {{{text}}}
   `,
-  model: googleAI.model('gemini-1.5-flash-latest'),
+  model: 'googleai/gemini-1.5-flash-latest',
 });
 
 const correctEssayFlow = ai.defineFlow(
@@ -45,7 +45,7 @@ const correctEssayFlow = ai.defineFlow(
     outputSchema: CorrectEssayOutputSchema,
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    const response = await prompt(input);
+    return response.output!;
   }
 );
