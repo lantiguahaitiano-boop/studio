@@ -1,0 +1,216 @@
+'use client';
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import Link from "next/link";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+
+const formSchema = z.object({
+  email: z.string().email({ message: "Por favor, introduce un correo válido." }),
+  password: z.string().min(1, { message: "La contraseña no puede estar vacía." }),
+});
+
+export function LoginForm() {
+  const { login, signInWithGoogle, signInWithMicrosoft, signInWithGitHub } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isMicrosoftLoading, setIsMicrosoftLoading] = useState(false);
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!login) return;
+    setIsLoading(true);
+    try {
+        await login(values);
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "El correo o la contraseña son incorrectos.",
+        });
+    } finally {
+        setIsLoading(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    if (!signInWithGoogle) return;
+    setIsGoogleLoading(true);
+    try {
+        await signInWithGoogle();
+    } catch (error) {
+         toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "No se pudo iniciar sesión con Google. Inténtalo de nuevo.",
+          });
+    } finally {
+        setIsGoogleLoading(false);
+    }
+  }
+  
+  async function handleMicrosoftSignIn() {
+    if (!signInWithMicrosoft) return;
+    setIsMicrosoftLoading(true);
+    try {
+        await signInWithMicrosoft();
+    } catch (error) {
+         toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "No se pudo iniciar sesión con Microsoft. Inténtalo de nuevo.",
+          });
+    } finally {
+        setIsMicrosoftLoading(false);
+    }
+  }
+
+  async function handleGitHubSignIn() {
+    if (!signInWithGitHub) return;
+    setIsGitHubLoading(true);
+    try {
+        await signInWithGitHub();
+    } catch (error) {
+         toast({
+            variant: "destructive",
+            title: "Error de inicio de sesión",
+            description: "No se pudo iniciar sesión con GitHub. Inténtalo de nuevo.",
+          });
+    } finally {
+        setIsGitHubLoading(false);
+    }
+  }
+
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-headline text-2xl">Iniciar Sesión</CardTitle>
+        <CardDescription>Accede a tu panel de control de Skillico.</CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-4">
+             <div className="grid grid-cols-1 gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGoogleSignIn}
+                  disabled={isLoading || isGoogleLoading || isMicrosoftLoading || isGitHubLoading}
+                  type="button"
+                >
+                  {isGoogleLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 21.2 173.8 58.2L373.2 121.8C337.9 86.6 295.6 70 248 70c-104.6 0-190 84.8-190 186.2s85.4 186.2 190 186.2c53.3 0 96.2-22.3 128.3-54.2 28.5-28.2 43.2-66.6 46.8-103.5H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
+                  )}
+                  Continuar con Google
+                </Button>
+                 <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleMicrosoftSignIn}
+                    disabled={isLoading || isGoogleLoading || isMicrosoftLoading || isGitHubLoading}
+                    type="button"
+                >
+                    {isMicrosoftLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>}
+                    Continuar con Microsoft
+                </Button>
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleGitHubSignIn}
+                    disabled={isLoading || isGoogleLoading || isMicrosoftLoading || isGitHubLoading}
+                    type="button"
+                >
+                    {isGitHubLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6.1 0-1.3-.5-2.4-1.3-3.2.1-.3.5-1.5-.1-3.2 0 0-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1c-.6 1.7-.2 2.9-.1 3.2-.8.8-1.3 1.9-1.3 3.2 0 4.6 2.7 5.7 5.5 6.1-.6.5-.9 1.2-.9 2.2V22"/></svg>}
+                    Continuar con GitHub
+                </Button>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  O continuar con
+                </span>
+              </div>
+            </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Correo electrónico</FormLabel>
+                  <FormControl>
+                    <Input placeholder="tu@email.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center">
+                    <FormLabel>Contraseña</FormLabel>
+                    <Link
+                      href="/forgot-password"
+                      className="ml-auto inline-block text-xs text-primary hover:underline"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading || isMicrosoftLoading || isGitHubLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Iniciar Sesión
+            </Button>
+            <p className="text-sm text-center text-muted-foreground">
+              ¿No tienes cuenta?{' '}
+              <Link href="/register" className="text-primary hover:underline">
+                Regístrate
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
+  );
+}
