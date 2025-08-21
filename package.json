@@ -38,6 +38,7 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-toggle-group": "^1.1.1",
     "@radix-ui/react-tooltip": "^1.1.8",
+    "@opentelemetry/instrumentation-winston": "^0.38.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -61,7 +62,6 @@
   },
   "devDependencies": {
     "@opentelemetry/exporter-jaeger": "^1.25.1",
-    "@opentelemetry/instrumentation-winston": "^0.38.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
