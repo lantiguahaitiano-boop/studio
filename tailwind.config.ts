@@ -99,6 +99,10 @@ export default {
         'pulse-subtle': {
             '0%, 100%': { opacity: '1' },
             '50%': { opacity: '0.6' },
+        },
+        'border-spin': {
+            '0%': { transform: 'rotate(0deg)' },
+            '100%': { transform: 'rotate(360deg)' },
         }
       },
       animation: {
@@ -107,6 +111,7 @@ export default {
         'fade-in': 'fade-in 0.5s ease-in-out',
         'slide-up': 'slide-up 0.5s ease-in-out',
         'pulse-subtle': 'pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'border-spin': 'border-spin 4s linear infinite',
       },
       animationDelay: {
         '200': '200ms',

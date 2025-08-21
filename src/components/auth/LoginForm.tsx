@@ -40,8 +40,14 @@ export function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!login) return;
     setIsLoading(true);
-    await login(values);
-    setIsLoading(false);
+    try {
+      await login(values);
+    } catch (error) {
+        // The login function in useAuth already handles toasts for errors
+        console.error("Login failed:", error);
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (

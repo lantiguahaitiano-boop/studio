@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, Download } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
@@ -51,6 +51,19 @@ export default function TextSummarizerPage() {
       setIsLoading(false);
     }
   }
+
+  const handleDownload = () => {
+    if (!summary) return;
+    const blob = new Blob([summary], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'resumen-skillico.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <AnimatedDiv className="space-y-6">
@@ -104,6 +117,7 @@ export default function TextSummarizerPage() {
         <Card>
             <CardHeader>
                 <CardTitle>Resumen Generado</CardTitle>
+                <CardDescription>El resultado de la IA aparecerá aquí.</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading && (
@@ -121,10 +135,14 @@ export default function TextSummarizerPage() {
                   </div>
               )}
               {summary && !isLoading && (
-                  <AnimatedDiv>
-                  <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
-                      {summary}
-                  </div>
+                  <AnimatedDiv className="space-y-4">
+                    <div className="prose prose-invert max-w-none whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm h-[300px] overflow-auto">
+                        {summary}
+                    </div>
+                     <Button onClick={handleDownload} variant="outline" className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Descargar Resumen
+                    </Button>
                   </AnimatedDiv>
               )}
               {!summary && !isLoading && (

@@ -10,13 +10,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { Loader2, Sparkles, Presentation as PresentationIcon, Users } from 'lucide-react';
+import { Loader2, Sparkles, Presentation as PresentationIcon, Users, Image as ImageIcon, Copy, Download } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const formSchema = z.object({
   topic: z.string().min(3, { message: 'El tema debe tener al menos 3 caracteres.' }),
@@ -43,6 +44,14 @@ export default function PresentationCreatorPage() {
     },
   });
 
+  const handleCopyPrompt = (promptText: string) => {
+    navigator.clipboard.writeText(promptText);
+    toast({
+      title: "Prompt Copiado",
+      description: "Puedes pegarlo en el Generador de Imágenes.",
+    });
+  };
+
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
     setPresentationPlan(null);
@@ -65,6 +74,65 @@ export default function PresentationCreatorPage() {
       setIsLoading(false);
     }
   }
+
+  const handleDownload = () => {
+    if (!presentationPlan) return;
+    let content = `Título: ${presentationPlan.title}\n\n`;
+    content += `====================\n`;
+    content += `Introducción (Expositor 1):\n${presentationPlan.introduction.content}\n`;
+    content += `Prompt de imagen: ${presentationPlan.introduction.imagePrompt}\n\n`;
+    
+    presentationPlan.exhibitorSections.forEach(section => {
+      content += `====================\n`;
+      content += `Expositor ${section.exhibitor}:\n${section.content}\n`;
+      content += `Prompt de imagen: ${section.imagePrompt}\n\n`;
+    });
+
+    content += `====================\n`;
+    content += `Conclusión (Último Expositor):\n${presentationPlan.conclusion.content}\n`;
+    content += `Prompt de imagen: ${presentationPlan.conclusion.imagePrompt}\n\n`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'guion-exposicion-skillico.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const SectionContent = ({ title, content, imagePrompt }: { title: string, content: string, imagePrompt: string }) => (
+     <div className="space-y-4">
+        <Separator />
+        <h3 className="font-headline text-lg">{title}</h3>
+        <p>{content}</p>
+        <div className="rounded-md border border-dashed bg-muted/50 p-3">
+          <div className="flex items-center justify-between gap-2">
+              <div className="flex items-start gap-2">
+                  <ImageIcon className="h-4 w-4 mt-1 text-primary flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground italic">
+                    <span className="font-semibold text-foreground">Sugerencia de imagen:</span> "{imagePrompt}"
+                  </p>
+              </div>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleCopyPrompt(imagePrompt)}>
+                            <Copy className="h-4 w-4" />
+                            <span className="sr-only">Copiar prompt</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Copiar prompt</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+          </div>
+        </div>
+      </div>
+  );
 
   return (
     <AnimatedDiv className="space-y-6">
@@ -177,8 +245,18 @@ export default function PresentationCreatorPage() {
         <div className="lg:col-span-2">
             <Card className="min-h-[400px]">
                 <CardHeader>
-                    <CardTitle>Guion de la Exposición</CardTitle>
-                    <CardDescription>Aquí tienes el contenido completo para tu presentación.</CardDescription>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Guion de la Exposición</CardTitle>
+                            <CardDescription>El contenido y sugerencias de imágenes para tu presentación.</CardDescription>
+                        </div>
+                        {presentationPlan && !isLoading && (
+                            <Button onClick={handleDownload} variant="outline" size="sm">
+                                <Download className="mr-2 h-4 w-4" />
+                                Descargar Guion
+                            </Button>
+                        )}
+                    </div>
                 </CardHeader>
                 <CardContent>
                 {isLoading && (
@@ -191,23 +269,26 @@ export default function PresentationCreatorPage() {
                     <AnimatedDiv className="prose prose-invert max-w-none rounded-md border bg-muted/30 p-4">
                         <h2 className="font-headline text-2xl text-primary">{presentationPlan.title}</h2>
                         
-                        <Separator className="my-4" />
-                        
-                        <h3 className="font-headline text-lg">Introducción (Expositor 1)</h3>
-                        <p>{presentationPlan.introduction}</p>
+                        <SectionContent 
+                            title="Introducción (Expositor 1)"
+                            content={presentationPlan.introduction.content}
+                            imagePrompt={presentationPlan.introduction.imagePrompt}
+                        />
 
                         {presentationPlan.exhibitorSections.map((section, index) => (
-                            <div key={index} className="mt-4">
-                                <Separator className="my-4" />
-                                <h3 className="font-headline text-lg">Expositor {section.exhibitor}</h3>
-                                <p>{section.content}</p>
-                            </div>
+                            <SectionContent 
+                                key={index}
+                                title={`Expositor ${section.exhibitor}`}
+                                content={section.content}
+                                imagePrompt={section.imagePrompt}
+                            />
                         ))}
                         
-                        <Separator className="my-4" />
-
-                        <h3 className="font-headline text-lg mt-4">Conclusión (Último Expositor)</h3>
-                        <p>{presentationPlan.conclusion}</p>
+                        <SectionContent 
+                            title="Conclusión (Último Expositor)"
+                            content={presentationPlan.conclusion.content}
+                            imagePrompt={presentationPlan.conclusion.imagePrompt}
+                        />
                     </AnimatedDiv>
                 )}
                 {!presentationPlan && !isLoading && (

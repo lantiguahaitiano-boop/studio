@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import {
   SidebarProvider,
@@ -40,6 +40,7 @@ import {
   FlaskConical,
   Shield,
   GitFork,
+  Image,
 } from 'lucide-react';
 import { UserNav } from '@/components/layout/UserNav';
 import { SkillicoLogo } from '@/components/icons/SkillicoLogo';
@@ -53,6 +54,7 @@ const menuItems = [
     { href: '/dashboard/concept-explainer', label: 'Explicador de Conceptos', icon: Lightbulb },
     { href: '/dashboard/essay-corrector', label: 'Corrector de Ensayos', icon: PenSquare },
     { href: '/dashboard/presentation-creator', label: 'Creador de Exposiciones', icon: Presentation },
+    { href: '/dashboard/image-generator', label: 'Generador de Imágenes', icon: Image },
     { href: '/dashboard/chatbot', label: 'Chat Privado con IA', icon: BotMessageSquare },
     { href: '/dashboard/interactive-assistant', label: 'Asistente Interactivo de Preguntas', icon: MessageCircleQuestion },
     { href: '/dashboard/exam-creator', label: 'Creador de Exámenes', icon: HelpCircle },
@@ -75,6 +77,7 @@ export default function DashboardLayout({
   const { user, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   React.useEffect(() => {
     if (loading) return;
@@ -92,6 +95,9 @@ export default function DashboardLayout({
   if (loading || !user) {
     return null;
   }
+
+  // Combine pathname and searchParams to create a truly unique key for animations
+  const uniqueKey = `${pathname}?${searchParams.toString()}`;
   
   return (
     <SidebarProvider>
@@ -159,7 +165,7 @@ export default function DashboardLayout({
         <main className="relative flex-1 overflow-auto p-4 md:p-6">
             <AnimatePresence mode="wait">
                  <motion.div
-                    key={pathname}
+                    key={uniqueKey}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 15 }}

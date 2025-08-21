@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Loader2, Sparkles, BookCheck, ClipboardList } from 'lucide-react';
+import { Loader2, Sparkles, BookCheck, ClipboardList, Download } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatedDiv } from '@/components/ui/animated-div';
@@ -52,6 +52,33 @@ export default function ProjectPlannerPage() {
       setIsLoading(false);
     }
   }
+
+   const handleDownload = () => {
+    if (!plan) return;
+    
+    let content = `Título: ${plan.title}\n\n`;
+    content += `Introducción:\n${plan.introduction}\n\n`;
+    content += 'Secciones:\n';
+    plan.sections.forEach(section => {
+        content += `\t- ${section.title}:\n`;
+        content += `\t  ${section.content.replace(/\n/g, '\n\t  ')}\n\n`;
+    });
+    content += `Conclusión:\n${plan.conclusion}\n\n`;
+    content += 'Bibliografía Sugerida:\n';
+    plan.bibliography.forEach(item => {
+        content += `- ${item}\n`;
+    });
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'plan-de-proyecto-skillico.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <AnimatedDiv className="space-y-6">
@@ -119,8 +146,16 @@ export default function ProjectPlannerPage() {
         <AnimatedDiv>
         <Card>
           <CardHeader>
-            <CardTitle>{plan.title}</CardTitle>
-            <CardDescription>Aquí tienes una estructura sugerida para tu proyecto.</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>{plan.title}</CardTitle>
+                <CardDescription>Aquí tienes una estructura sugerida para tu proyecto.</CardDescription>
+              </div>
+               <Button onClick={handleDownload} variant="outline" size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                Descargar Plan
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
